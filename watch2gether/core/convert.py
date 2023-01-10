@@ -6,9 +6,9 @@ from typing import Literal, Union
 
 from watch2gether import logger
 
+HLSPlaylistType = Literal['event', 'vod']
 Preset = Literal['ultrafast', 'superfast', 'veryfast', 'faster',
                  'fast', 'medium', 'slow', 'slower', 'veryslow']
-HLSPlaylistType = Literal['event', 'vod']
 
 
 def convert_mp4_to_m3u8(mp4_filepath: Union[str, os.PathLike],
