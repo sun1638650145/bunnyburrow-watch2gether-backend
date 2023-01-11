@@ -36,10 +36,10 @@ def convert_mp4_to_m3u8(mp4_filepath: Union[str, os.PathLike],
             音频编码器, 封装参数`ffmpeg -c:a aac`, 支持的编码器请使用`ffmpeg -codecs`查看.
         crf: int, default=23,
             m3u8文件的视频压缩质量(Constant Rate Factor), 封装参数`ffmpeg -crf 23`,
-            取值范围[0, 51], 推荐选择范围[17, 28], 注意crf值越小, 视频质量越高, 转换时间越长.
+             取值范围[0, 51], 推荐选择范围[17, 28], 注意crf值越小, 视频质量越高, 转换时间越长.
         preset: {'ultrafast', 'superfast', 'veryfast', 'faster',
-                 'fast', 'medium', 'slow', 'slower', 'veryslow'},
-                  default='veryfast', 编码速度与压缩比, 封装参数`ffmpeg -preset veryfast`.
+            'fast', 'medium', 'slow', 'slower', 'veryslow'},
+             default='veryfast', 编码速度与压缩比, 封装参数`ffmpeg -preset veryfast`.
         bitrate: int, default=128,
             m3u8文件的音频的比特率, 单位为kbit/s. 封装参数`ffmpeg -b:a 128k`.
         audio_channels: int, default=2,
