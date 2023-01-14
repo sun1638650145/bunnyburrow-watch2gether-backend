@@ -11,3 +11,4 @@ logging.basicConfig(format='%(message)s', level=logging.INFO)
 logger = logging.getLogger()
 
 from watch2gether.core import convert_mp4_to_m3u8
+from watch2gether.core import launch_streaming
