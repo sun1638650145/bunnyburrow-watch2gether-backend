@@ -1,5 +1,6 @@
 import os
 import subprocess
+import sys
 
 from pathlib import Path
 from typing import Literal, Union
@@ -20,8 +21,9 @@ def convert_mp4_to_m3u8(mp4_filepath: Union[str, os.PathLike],
                         bitrate: int = 128,
                         audio_channels: int = 2,
                         m3u8_format: str = 'hls',
-                        hls_time: int = 4,
-                        hls_playlist_type: HLSPlaylistType = 'event'):
+                        hls_time: int = 2,
+                        hls_playlist_type: HLSPlaylistType = 'vod',
+                        hls_segment_filename: str = 'stream'):
     """将视频从mp4格式转换成m3u8, 以满足对流媒体的支持;
     如不了解`ffmpeg`的使用, 建议使用默认参数.
 
@@ -46,10 +48,14 @@ def convert_mp4_to_m3u8(mp4_filepath: Union[str, os.PathLike],
             m3u8文件的音频的声道数, 封装参数`ffmpeg -ac 2`.
         m3u8_format: str, default='hls',
             输出文件的封装格式, 封装参数`ffmpeg -f hls`, 支持的封装格式请使用`ffmpeg -formats`查看.
-        hls_time: int, default=4,
-            HLS视频流片段的时长, 封装参数`ffmpeg -f hls -hls_time 4`, 仅在输出文件的封装格式为HLS时有效.
-        hls_playlist_type: {'event', 'vod'}, default='event',
+        hls_time: int, default=2,
+            HLS视频流片段的时长, 封装参数`ffmpeg -f hls -hls_time 2`, 仅在输出文件的封装格式为HLS时有效.
+        hls_playlist_type: {'event', 'vod'}, default='vod',
             HLS视频播放列表的类型, 封装参数`ffmpeg -f hls -hls_playlist_type event`,
+             仅在输出文件的封装格式为HLS时有效.
+        hls_segment_filename: str, default='stream',
+            HLS视频流片段的文件名, 默认格式是'/path/to/stream_%d.ts',
+            封装参数`ffmpeg -f hls -hls_segment_filename '/path/to/stream_%d.ts'`,
              仅在输出文件的封装格式为HLS时有效.
     """
     cmd = 'ffmpeg'
@@ -62,8 +68,12 @@ def convert_mp4_to_m3u8(mp4_filepath: Union[str, os.PathLike],
     cmd += ' -ac {}'.format(audio_channels)
     cmd += ' -f {}'.format(m3u8_format)
     if m3u8_format == 'hls':
+        hls_segment_filename = os.path.join(Path(m3u8_filepath).parent,
+                                            hls_segment_filename)
+
         cmd += ' -hls_time {}'.format(hls_time)
         cmd += ' -hls_playlist_type {}'.format(hls_playlist_type)
+        cmd += ' -hls_segment_filename "{}_%d.ts"'.format(hls_segment_filename)
     cmd += ' {}'.format(m3u8_filepath)
 
     # 创建用于保存m3u8的文件夹.
@@ -73,3 +83,4 @@ def convert_mp4_to_m3u8(mp4_filepath: Union[str, os.PathLike],
         subprocess.run(cmd, check=True, shell=True)
     except subprocess.CalledProcessError:
         logger.error('没有找到ffmpeg命令, 请安装ffmpeg后重试.')
+        sys.exit(127)
