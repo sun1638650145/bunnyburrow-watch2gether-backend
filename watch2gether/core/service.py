@@ -14,7 +14,7 @@ video_directory = Path()  # 视频文件夹路径.
 
 
 @app.get('/video/{video_name}/')
-def redirect_streaming_wrapper(video_name: str) -> RedirectResponse:
+async def redirect_streaming_wrapper(video_name: str) -> RedirectResponse:
     """重定向视频流媒体.
 
     Args:
@@ -26,7 +26,7 @@ def redirect_streaming_wrapper(video_name: str) -> RedirectResponse:
 
 
 @app.get('/file/{file_name}')
-def create_vod_streaming(file_name: str) -> FileResponse:
+async def create_vod_streaming(file_name: str) -> FileResponse:
     """创建流媒体(点播)服务.
 
     Args:
