@@ -5,13 +5,13 @@ with open('README.md', 'r', encoding='utf-8') as fp:
 
 setup(
     name='watch2gether',
-    version='0.1a0',
+    version='0.1a1',
     description='一起看电影',
     long_description=long_description,
     long_description_content_type='text/markdown',
     author='Steve R. Sun',
     author_email='s1638650145@gmail.com',
-    url='www.sunruiqi.com',
+    url='https://www.sunruiqi.com',
     packages=find_packages(),
     classifiers=[
         'Development Status :: 3 - Alpha',
@@ -21,8 +21,7 @@ setup(
     ],
     license='Non-free Software',
     install_requires=[
-        'fastapi==0.89.1',
-        'uvicorn==0.20.0',
+        'fastapi>=0.89.1, <=0.92.0',
     ],
     python_requires='>=3.8',
 )
