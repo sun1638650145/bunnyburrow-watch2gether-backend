@@ -1,15 +1,10 @@
-from datetime import datetime
 from typing import List
 
 from fastapi import APIRouter
 from fastapi import WebSocket, WebSocketDisconnect
 
 from watch2gether import logger
-
-
-def _get_current_time() -> str:
-    """获取当前时间."""
-    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+from watch2gether.core import get_current_time
 
 
 class WebSocketConnectionManager(object):
@@ -33,7 +28,7 @@ class WebSocketConnectionManager(object):
         await websocket.accept()
         self.active_connections.append(websocket)
 
-        logger.info(f'{_get_current_time()}: 客户端'
+        logger.info(f'{get_current_time()}: 客户端'
                     f'({websocket.client.host}:{websocket.client.port})连接成功.')
 
     def disconnect(self, websocket: WebSocket):
@@ -45,7 +40,7 @@ class WebSocketConnectionManager(object):
         """
         self.active_connections.remove(websocket)
 
-        logger.info(f'{_get_current_time()}: 客户端'
+        logger.info(f'{get_current_time()}: 客户端'
                     f'({websocket.client.host}:{websocket.client.port})断开连接.')
 
     async def broadcast(self, websocket: WebSocket, data: dict):
@@ -60,7 +55,7 @@ class WebSocketConnectionManager(object):
         for connection in self.active_connections:
             await connection.send_json(data)
 
-        logger.info(f'{_get_current_time()}: 客户端'
+        logger.info(f'{get_current_time()}: 客户端'
                     f'({websocket.client.host}:{websocket.client.port})广播数据.')
 
 
