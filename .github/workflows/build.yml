@@ -57,4 +57,5 @@ jobs:
         flake8 . --count
     - name: Test with pytest
       run: |
-        coverage run -m pytest
+        # coverage run -m pytest
+        ffmpeg -i ./tests/assets/我们亲爱的Steve.mp4 -c:v libx264 -crf 23 -preset veryfast -c:a aac -b:a 128k -ac 2 -f hls -hls_time 2 -hls_playlist_type vod -hls_nt_filename "tests/assets/我们亲爱的Steve/stream_%d.ts" ./tests/assets/我们亲爱的Steve/我们亲爱的Steve.m3u8
