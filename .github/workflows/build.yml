@@ -58,4 +58,4 @@ jobs:
     - name: Test with pytest
       run: |
         # coverage run -m pytest
-        ffmpeg -i ./tests/assets/我们亲爱的Steve.mp4 ./tests/assets/我们亲爱的Steve/我们亲爱的Steve.mp4
+        ffmpeg -v error -i ./tests/assets/我们亲爱的Steve.mp4 -f null -
