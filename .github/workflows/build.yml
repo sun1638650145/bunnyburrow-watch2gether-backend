@@ -7,7 +7,7 @@ on:
     branches: [ 'master' ]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -30,11 +30,11 @@ jobs:
         brew update
         brew install ffmpeg
       if: runner.os == 'macOS'
-    - name: Before Ubuntu install
+    - name: Before Linux install
       run: |
         sudo apt update
         sudo apt install -y ffmpeg
-      if: runner.os == 'Ubuntu'
+      if: runner.os == 'Linux'
     - name: Before Windows install
       run: |
         vcpkg install ffmpeg:x64-windows
