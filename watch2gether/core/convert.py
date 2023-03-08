@@ -23,7 +23,7 @@ def convert_mp4_to_m3u8(mp4_filepath: Union[str, os.PathLike],
                         m3u8_format: str = 'hls',
                         hls_time: int = 2,
                         hls_playlist_type: HLSPlaylistType = 'vod',
-                        hls_segment_filename: str = 'stream'):
+                        hls_segment_filename: str = 'stream') -> Path:
     """将视频从mp4格式转换成m3u8, 以满足对流媒体的支持;
     如不了解`ffmpeg`的使用, 建议使用默认参数.
 
@@ -57,6 +57,9 @@ def convert_mp4_to_m3u8(mp4_filepath: Union[str, os.PathLike],
             HLS视频流片段的文件名, 默认格式是'/path/to/stream_%d.ts',
             封装参数`ffmpeg -f hls -hls_segment_filename '/path/to/stream_%d.ts'`,
              仅在输出文件的封装格式为HLS时有效.
+
+    Return:
+        m3u8文件的绝对路径.
     """
     cmd = 'ffmpeg'
     cmd += ' -i {}'.format(mp4_filepath)
@@ -84,3 +87,5 @@ def convert_mp4_to_m3u8(mp4_filepath: Union[str, os.PathLike],
     except subprocess.CalledProcessError:
         logger.error('没有找到ffmpeg命令, 请安装ffmpeg后重试.')
         sys.exit(127)
+
+    return Path(m3u8_filepath).absolute()
