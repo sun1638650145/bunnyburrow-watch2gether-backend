@@ -24,6 +24,7 @@ jobs:
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4.5.0
       with:
+        lfs: true  # 下载Git LFS缓存.
         python-version: ${{ matrix.python-version }}
     - name: Before macOS install
       run: |
@@ -57,6 +58,4 @@ jobs:
         flake8 . --count
     - name: Test with pytest
       run: |
-        # coverage run -m pytest
-        git lfs pull
-        ffmpeg -v error -i ./tests/assets/我们亲爱的Steve.mp4 -f null -
+        coverage run -m pytest
