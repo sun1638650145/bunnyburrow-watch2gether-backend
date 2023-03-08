@@ -21,10 +21,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3.3.0
+      with:
+        lfs: true  # 下载Git LFS缓存.
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4.5.0
       with:
-        lfs: 'true'  # 下载Git LFS缓存.
         python-version: ${{ matrix.python-version }}
     - name: Before macOS install
       run: |
