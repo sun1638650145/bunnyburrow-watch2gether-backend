@@ -1,2 +1,2 @@
 # 使用Git LFS存储MP4文件.
-*.mp4 filter=lfs diff=lfs merge=lfs -text
+*.mkv filter=lfs diff=lfs merge=lfs -text

@@ -6,7 +6,7 @@ class TestConvert(object):
     def test_convert_mp4_to_m3u8(self):
         """测试流媒体转换函数."""
         assert w2g.convert_mp4_to_m3u8(
-            mp4_filepath='./tests/assets/我们亲爱的Steve.mp4',
+            mp4_filepath='./tests/assets/我们亲爱的Steve.mkv',
             m3u8_filepath='./tests/assets/我们亲爱的Steve/我们亲爱的Steve.m3u8',
             video_encoder='libx264',
             audio_encoder='aac',
