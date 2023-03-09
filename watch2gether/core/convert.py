@@ -59,7 +59,7 @@ def convert_mp4_to_m3u8(mp4_filepath: Union[str, os.PathLike],
              仅在输出文件的封装格式为HLS时有效.
 
     Return:
-        m3u8文件的绝对路径.
+        m3u8文件夹的绝对路径.
     """
     cmd = 'ffmpeg'
     cmd += ' -i {}'.format(mp4_filepath)
@@ -88,4 +88,4 @@ def convert_mp4_to_m3u8(mp4_filepath: Union[str, os.PathLike],
         logger.error('没有找到ffmpeg命令, 请安装ffmpeg后重试.')
         sys.exit(127)
 
-    return Path(m3u8_filepath).absolute()
+    return Path(m3u8_filepath).absolute().parent
