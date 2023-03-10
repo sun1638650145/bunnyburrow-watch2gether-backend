@@ -13,5 +13,5 @@ class TestStreaming(object):
             m3u8_filepath='./tests/assets/我们亲爱的Steve/我们亲爱的Steve.m3u8'
         )
 
-        response = client.get('/video/我们亲爱的Steve')
+        response = client.get('/video/我们亲爱的Steve/')
         assert response.status_code == 200

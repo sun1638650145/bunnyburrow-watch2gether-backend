@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from fastapi import APIRouter
 from fastapi import WebSocket, WebSocketDisconnect
@@ -43,20 +43,25 @@ class WebSocketConnectionManager(object):
         logger.info(f'{get_current_time()}: 客户端'
                     f'({websocket.client.host}:{websocket.client.port})断开连接.')
 
-    async def broadcast(self, websocket: WebSocket, data: dict):
+    async def broadcast(self,
+                        data: dict,
+                        websocket: Optional[WebSocket] = None):
         """对连接的WebSocket客户端进行广播(传输JSON数据).
 
         Args:
-            websocket: WebSocket,
-                广播数据来源的WebSocket客户端.
             data: dict,
                 广播的数据(JSON格式).
+            websocket: WebSocket, default=None,
+                (可选)广播数据来源的WebSocket客户端.
         """
         for connection in self.active_connections:
             await connection.send_json(data)
 
-        logger.info(f'{get_current_time()}: 客户端'
-                    f'({websocket.client.host}:{websocket.client.port})广播数据.')
+        if websocket:
+            client_message = f'({websocket.client.host}:{websocket.client.port})'  # noqa: E501
+        else:
+            client_message = ''
+        logger.info(f'{get_current_time()}: 客户端{client_message}广播数据.')
 
 
 router = APIRouter()
@@ -77,6 +82,6 @@ async def create_websocket_endpoint(websocket: WebSocket):
         while True:
             # 接收并转发(广播)数据.
             data = await websocket.receive_json()
-            await manager.broadcast(websocket, data)
+            await manager.broadcast(data, websocket)
     except WebSocketDisconnect:
         manager.disconnect(websocket)
