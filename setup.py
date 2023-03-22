@@ -21,7 +21,7 @@ setup(
     ],
     license='Non-free Software',
     install_requires=[
-        'fastapi>=0.89.1, <=0.93.0',
+        'fastapi>=0.89.1, <=0.95.0',
         'websockets==10.4',
     ],
     python_requires='>=3.8',

@@ -55,7 +55,8 @@ class WebSocketConnectionManager(object):
                 (可选)广播数据来源的WebSocket客户端.
         """
         for connection in self.active_connections:
-            await connection.send_json(data)
+            if connection != websocket:  # 发送数据的WebSocket客户端不广播自身.
+                await connection.send_json(data)
 
         if websocket:
             client_message = f'({websocket.client.host}:{websocket.client.port})'  # noqa: E501
