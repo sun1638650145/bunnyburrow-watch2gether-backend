@@ -39,9 +39,8 @@ def convert_mp4_to_m3u8(mp4_filepath: Union[str, os.PathLike],
         crf: int, default=23,
             m3u8文件的视频压缩质量(Constant Rate Factor), 封装参数`ffmpeg -crf 23`,
              取值范围[0, 51], 推荐选择范围[17, 28], 注意crf值越小, 视频质量越高, 转换时间越长.
-        preset: {'ultrafast', 'superfast', 'veryfast', 'faster',
-            'fast', 'medium', 'slow', 'slower', 'veryslow'},
-             default='veryfast', 编码速度与压缩比, 封装参数`ffmpeg -preset veryfast`.
+        preset: Preset, default='veryfast',
+            编码速度与压缩比, 封装参数`ffmpeg -preset veryfast`.
         bitrate: int, default=128,
             m3u8文件的音频的比特率, 单位为kbit/s. 封装参数`ffmpeg -b:a 128k`.
         audio_channels: int, default=2,
@@ -50,7 +49,7 @@ def convert_mp4_to_m3u8(mp4_filepath: Union[str, os.PathLike],
             输出文件的封装格式, 封装参数`ffmpeg -f hls`, 支持的封装格式请使用`ffmpeg -formats`查看.
         hls_time: int, default=2,
             HLS视频流片段的时长, 封装参数`ffmpeg -f hls -hls_time 2`, 仅在输出文件的封装格式为HLS时有效.
-        hls_playlist_type: {'event', 'vod'}, default='vod',
+        hls_playlist_type: HLSPlaylistType, default='vod',
             HLS视频播放列表的类型, 封装参数`ffmpeg -f hls -hls_playlist_type event`,
              仅在输出文件的封装格式为HLS时有效.
         hls_segment_filename: str, default='stream',

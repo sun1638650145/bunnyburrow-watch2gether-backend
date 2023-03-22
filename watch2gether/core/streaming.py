@@ -20,6 +20,9 @@ async def redirect_streaming_wrapper(video_name: str) -> RedirectResponse:
     Args:
         video_name: str,
             视频名称(路径参数), 用于访问播放的流媒体视频.
+
+    Return:
+        HTTP重定向到`/file/{video_name}.m3u8`.
     """
     return RedirectResponse(url=f'/file/{video_name}.m3u8',
                             status_code=301)
