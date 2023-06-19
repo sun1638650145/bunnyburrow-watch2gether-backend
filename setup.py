@@ -5,7 +5,7 @@ with open('README.md', 'r', encoding='utf-8') as fp:
 
 setup(
     name='watch2gether',
-    version='0.1a3',
+    version='0.1a4',
     description='一起看电影',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -21,8 +21,8 @@ setup(
     ],
     license='GNU General Public License v2 (GPLv2)',
     install_requires=[
-        'fastapi>=0.89.1, <=0.95.0',
-        'websockets==10.4',
+        'fastapi>=0.89.1, <=0.97.0',
+        'websockets>=10.4, <=11.0.3',
     ],
     python_requires='>=3.8',
 )
