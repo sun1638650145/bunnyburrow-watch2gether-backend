@@ -11,7 +11,7 @@ setup(
     long_description_content_type='text/markdown',
     author='Steve R. Sun',
     author_email='s1638650145@gmail.com',
-    url='https://www.sunruiqi.com',
+    url='https://github.com/sun1638650145/bunnyburrow',
     packages=find_packages(),
     classifiers=[
         'Development Status :: 3 - Alpha',
@@ -20,8 +20,14 @@ setup(
         'Topic :: Utilities',
     ],
     license='GNU General Public License v2 (GPLv2)',
+    entry_points={
+        'console_scripts': [
+            'w2g-cli = watch2gether.cli:run'
+        ]
+    },
     install_requires=[
         'fastapi>=0.89.1, <=0.97.0',
+        'uvicorn==0.22.0',
         'websockets>=10.4, <=11.0.3',
     ],
     python_requires='>=3.8',
