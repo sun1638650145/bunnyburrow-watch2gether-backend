@@ -2,7 +2,11 @@ import argparse
 import sys
 from typing import List
 
-from watch2gether.command_wrapper import launch_command
+from watch2gether.command_wrapper import (
+    convert_command,
+    launch_command,
+    version_command
+)
 
 
 def _parse_args(args: List[str]) -> argparse.Namespace:
@@ -15,7 +19,7 @@ def _parse_args(args: List[str]) -> argparse.Namespace:
     Return:
         命令行解析后的参数Namespace字典.
     """
-    parser = argparse.ArgumentParser(usage='w2g-cli {launch}',
+    parser = argparse.ArgumentParser(usage='w2g-cli {convert, launch, version}',  # noqa: E501
                                      add_help=False,
                                      exit_on_error=False)
     subparsers = parser.add_subparsers(dest='command')
@@ -24,6 +28,15 @@ def _parse_args(args: List[str]) -> argparse.Namespace:
         sys.exit(2)
     else:
         args = args[1:]
+        # 视频格式转换命令.
+        parser_convert = subparsers.add_parser('convert',
+                                               usage='w2g-cli convert mp4_filepath m3u8_filepath',  # noqa: E501
+                                               description='将视频从mp4格式转换成m3u8.')
+        parser_convert.add_argument('mp4_filepath',
+                                    help='mp4文件的路径.')
+        parser_convert.add_argument('m3u8_filepath',
+                                    help='m3u8文件的路径.')
+
         # 启动服务命令.
         parser_launch = subparsers.add_parser('launch',
                                               usage='w2g-cli launch [--host] [--port] video_dir',  # noqa: E501
@@ -37,6 +50,11 @@ def _parse_args(args: List[str]) -> argparse.Namespace:
                                    default=8000,
                                    help='绑定的端口号, 默认为8000.')
 
+        # 查看版本命令.
+        subparsers.add_parser('version',
+                              usage='w2g-cli version',
+                              description='查看命令行工具版本.')
+
         return parser.parse_args(args)
 
 
@@ -45,9 +63,13 @@ def run():
     try:
         meta_data = _parse_args(sys.argv)
 
-        if meta_data.command == 'launch':
+        if meta_data.command == 'convert':
+            convert_command(meta_data.mp4_filepath, meta_data.m3u8_filepath)
+        elif meta_data.command == 'launch':
             launch_command(meta_data.video_dir,
                            meta_data.host,
                            meta_data.port)
+        elif meta_data.command == 'version':
+            version_command()
     except argparse.ArgumentError:
         sys.exit(2)
