@@ -1,3 +1,5 @@
+from typing import Literal
+
 from uvicorn import run
 
 from watch2gether import __version__
@@ -5,9 +7,11 @@ from watch2gether import app
 from watch2gether import convert_mp4_to_m3u8, streaming
 from watch2gether import logger
 
+Mode = Literal['error', 'info']
 
-def convert_command(mp4_filepath: str,
-                    m3u8_filepath: str):
+
+def convert_command(mp4_file: str,
+                    m3u8_file: str):
     """视频格式转换命令, 简化ffmpeg的使用,
     复杂功能请使用Python脚本模式.
 
@@ -17,12 +21,45 @@ def convert_command(mp4_filepath: str,
         ```
 
     Args:
-        mp4_filepath: str,
+        mp4_file: str,
             mp4文件的路径.
-        m3u8_filepath: str,
+        m3u8_file: str,
             m3u8文件的路径.
     """
-    convert_mp4_to_m3u8(mp4_filepath, m3u8_filepath)
+    convert_mp4_to_m3u8(mp4_file, m3u8_file)
+
+
+def help_command(level: Mode):
+    """帮助命令, 用于查看帮助信息.
+
+    Example:
+        ```shell
+        w2g-cli help
+        ```
+    """
+    _help_msg = f"""一起看电影命令行工具 {__version__}
+
+Bunnyburrow Software Project(兔窝镇软件计划)
+Copyright 2023 Steve R. Sun. All rights reserved.
+--------------------------------------------------
+usage:
+  w2g-cli convert mp4_file m3u8_file
+    将视频从mp4格式转换成m3u8格式.
+  w2g-cli help
+    获取帮助信息.
+  w2g-cli launch [--host] [--port] streaming_video
+    启动流媒体服务和WebSocket服务.
+    options:
+      --host: 使用的主机地址, 默认为127.0.0.1.
+      --port: 绑定的端口号, 默认为8000.
+  w2g-cli version
+    查看命令行工具版本.
+"""
+
+    if level == 'error':
+        logger.error(_help_msg)
+    else:
+        logger.info(_help_msg)
 
 
 def launch_command(video_dir: str,
