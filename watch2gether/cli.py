@@ -33,7 +33,7 @@ def _parse_args(args: List[str]) -> argparse.Namespace:
         # 视频格式转换命令.
         parser_convert = subparsers.add_parser('convert',
                                                usage='w2g-cli convert mp4_file m3u8_file',  # noqa: E501
-                                               description='将视频从mp4格式转换成m3u8格式.')
+                                               description='将视频从mp4格式转换成m3u8格式.')  # noqa: E501
         parser_convert.add_argument('mp4_file',
                                     help='mp4文件的路径.')
         parser_convert.add_argument('m3u8_file',
