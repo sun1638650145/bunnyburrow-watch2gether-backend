@@ -1,4 +1,7 @@
-from typing import Literal
+import os
+
+from pathlib import Path
+from typing import Literal, Union
 
 from uvicorn import run
 
@@ -52,6 +55,11 @@ usage:
     options:
       --host: 使用的主机地址, 默认为127.0.0.1.
       --port: 绑定的端口号, 默认为8000.
+  w2g-cli one [--host] [--port] mp4_file
+    自动处理mp4视频并启动流媒体服务和WebSocket服务.
+    options:
+      --host: 使用的主机地址, 默认为127.0.0.1.
+      --port: 绑定的端口号, 默认为8000.
   w2g-cli version
     查看命令行工具版本.
 """
@@ -62,7 +70,7 @@ usage:
         logger.info(_help_msg)
 
 
-def launch_command(video_dir: str,
+def launch_command(video_dir: Union[str, os.PathLike],
                    host: str,
                    port: int):
     """启动服务命令, 用于启动流媒体服务和WebSocket服务.
@@ -73,7 +81,7 @@ def launch_command(video_dir: str,
         ```
 
     Args:
-        video_dir: str,
+        video_dir: str or os.PathLike,
             流媒体视频文件夹路径.
         host: str,
             使用的主机地址.
@@ -84,6 +92,30 @@ def launch_command(video_dir: str,
     streaming.video_directory = video_dir
 
     run(app, host=host, port=port, log_level='error')
+
+
+def one_command(mp4_file: str,
+                host: str,
+                port: int):
+    """自动处理mp4视频并启动流媒体服务和WebSocket服务.
+
+    Example:
+        ```shell
+        w2g-cli one ./flower.mp4
+        ```
+
+    Args:
+        mp4_file: str,
+            mp4文件的路径.
+        host: str,
+            使用的主机地址.
+        port: int,
+            绑定的端口号.
+    """
+    video_dir = convert_mp4_to_m3u8(mp4_file,
+                                    Path(mp4_file).stem)  # 默认使用文件名作为m3u8文件名.
+    # 调用launch_command实现代码复用.
+    launch_command(video_dir, host, port)
 
 
 def version_command():

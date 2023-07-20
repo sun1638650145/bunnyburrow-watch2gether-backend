@@ -6,6 +6,7 @@ from watch2gether.command_wrapper import (
     convert_command,
     help_command,
     launch_command,
+    one_command,
     version_command
 )
 
@@ -20,7 +21,7 @@ def _parse_args(args: List[str]) -> argparse.Namespace:
     Return:
         命令行解析后的参数Namespace字典.
     """
-    parser = argparse.ArgumentParser(usage='w2g-cli {convert, help, launch, version}',  # noqa: E501
+    parser = argparse.ArgumentParser(usage='w2g-cli {convert, help, launch, one, version}',  # noqa: E501
                                      add_help=False,
                                      exit_on_error=False)
     subparsers = parser.add_subparsers(dest='command')
@@ -57,6 +58,19 @@ def _parse_args(args: List[str]) -> argparse.Namespace:
                                    default=8000,
                                    help='绑定的端口号, 默认为8000.')
 
+        # one命令.
+        parser_one = subparsers.add_parser('one',
+                                           usage='w2g-cli one [--host] [--port] mp4_file',  # noqa: E501
+                                           description='自动处理mp4视频并启动流媒体服务和WebSocket服务.')  # noqa: E501
+        parser_one.add_argument('mp4_file',
+                                help='mp4文件的路径.')
+        parser_one.add_argument('--host',
+                                default='127.0.0.1',
+                                help='使用的主机地址, 默认为127.0.0.1.')
+        parser_one.add_argument('--port',
+                                default=8000,
+                                help='绑定的端口号, 默认为8000.')
+
         # 查看版本命令.
         subparsers.add_parser('version',
                               usage='w2g-cli version',
@@ -78,6 +92,10 @@ def run():
             launch_command(meta_data.streaming_video,
                            meta_data.host,
                            meta_data.port)
+        elif meta_data.command == 'one':
+            one_command(meta_data.mp4_file,
+                        meta_data.host,
+                        meta_data.port)
         elif meta_data.command == 'version':
             version_command()
     except argparse.ArgumentError:
