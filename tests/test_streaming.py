@@ -10,7 +10,7 @@ class TestStreaming(object):
         client = TestClient(w2g.app)
         w2g.streaming.video_directory = w2g.convert_mp4_to_m3u8(
             mp4_filepath='./tests/assets/flower.mp4',
-            m3u8_filepath='./tests/assets/flower/flower.m3u8'
+            m3u8_directory='./tests/assets/flower/'
         )
 
         response = client.get('/video/flower/')
