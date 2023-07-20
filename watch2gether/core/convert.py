@@ -13,7 +13,7 @@ Preset = Literal['ultrafast', 'superfast', 'veryfast', 'faster',
 
 
 def convert_mp4_to_m3u8(mp4_filepath: Union[str, os.PathLike],
-                        m3u8_filepath: Union[str, os.PathLike],
+                        m3u8_directory: Union[str, os.PathLike],
                         video_encoder: str = 'libx264',
                         audio_encoder: str = 'aac',
                         crf: int = 23,
@@ -24,14 +24,14 @@ def convert_mp4_to_m3u8(mp4_filepath: Union[str, os.PathLike],
                         hls_time: int = 2,
                         hls_playlist_type: HLSPlaylistType = 'vod',
                         hls_segment_filename: str = 'stream') -> Path:
-    """将视频从mp4格式转换成m3u8, 以满足对流媒体的支持;
+    """将视频从mp4格式转换成m3u8格式, 以满足对流媒体的支持;
     如不了解`ffmpeg`的使用, 建议使用默认参数.
 
     Args:
         mp4_filepath: str or os.PathLike,
             mp4文件的路径, 封装参数`ffmpeg -i input.mp4`.
-        m3u8_filepath: str or os.PathLike,
-            m3u8文件的路径, 封装参数`ffmpeg output.m3u8`.
+        m3u8_directory: str or os.PathLike,
+            m3u8文件夹的路径, 封装参数`ffmpeg output.m3u8`.
         video_encoder: str, default='libx264',
             视频编码器, 封装参数`ffmpeg -c:v libx264`, 支持的编码器请使用`ffmpeg -codecs`查看.
         audio_encoder: str, default='aac',
@@ -50,11 +50,11 @@ def convert_mp4_to_m3u8(mp4_filepath: Union[str, os.PathLike],
         hls_time: int, default=2,
             HLS视频流片段的时长, 封装参数`ffmpeg -f hls -hls_time 2`, 仅在输出文件的封装格式为HLS时有效.
         hls_playlist_type: HLSPlaylistType, default='vod',
-            HLS视频播放列表的类型, 封装参数`ffmpeg -f hls -hls_playlist_type event`,
+            HLS视频播放列表的类型, 封装参数`ffmpeg -f hls -hls_playlist_type vod`,
              仅在输出文件的封装格式为HLS时有效.
         hls_segment_filename: str, default='stream',
-            HLS视频流片段的文件名, 默认格式是'/path/to/stream_%d.ts',
-            封装参数`ffmpeg -f hls -hls_segment_filename '/path/to/stream_%d.ts'`,
+            HLS视频流片段的文件名, 默认格式是'm3u8_directory/stream_%d.ts',
+             封装参数`ffmpeg -f hls -hls_segment_filename 'm3u8_directory/stream_%d.ts'`,  # noqa: E501
              仅在输出文件的封装格式为HLS时有效.
 
     Return:
@@ -70,16 +70,18 @@ def convert_mp4_to_m3u8(mp4_filepath: Union[str, os.PathLike],
     cmd += ' -ac {}'.format(audio_channels)
     cmd += ' -f {}'.format(m3u8_format)
     if m3u8_format == 'hls':
-        hls_segment_filename = os.path.join(Path(m3u8_filepath).parent,
+        hls_segment_filename = os.path.join(m3u8_directory,
                                             hls_segment_filename)
 
         cmd += ' -hls_time {}'.format(hls_time)
         cmd += ' -hls_playlist_type {}'.format(hls_playlist_type)
         cmd += ' -hls_segment_filename "{}_%d.ts"'.format(hls_segment_filename)
-    cmd += ' {}'.format(m3u8_filepath)
+
+    cmd += ' {}'.format(os.path.join(m3u8_directory,
+                                     Path(m3u8_directory).name + '.m3u8'))
 
     # 创建用于保存m3u8的文件夹.
-    os.makedirs(Path(m3u8_filepath).absolute().parent, exist_ok=True)
+    os.makedirs(Path(m3u8_directory).absolute(), exist_ok=True)
 
     try:
         subprocess.run(cmd, check=True, shell=True)
@@ -87,4 +89,4 @@ def convert_mp4_to_m3u8(mp4_filepath: Union[str, os.PathLike],
         logger.error('没有找到ffmpeg命令, 请安装ffmpeg后重试.')
         sys.exit(127)
 
-    return Path(m3u8_filepath).absolute().parent
+    return Path(m3u8_directory).absolute()

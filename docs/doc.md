@@ -24,7 +24,7 @@ uvicorn.run(app=w2g.app,
 
 ### convert_mp4_to_m3u8
 
-将视频从`mp4`格式转换成`m3u8`, 以满足对流媒体的支持.
+将视频从`mp4`格式转换成`m3u8`格式, 以满足对流媒体的支持.
 
 #### 警告 ⚠️
 
@@ -32,7 +32,7 @@ uvicorn.run(app=w2g.app,
 
 ```python
 convert_mp4_to_m3u8(mp4_filepath,
-                    m3u8_filepath,
+                    m3u8_directory,
                     video_encoder='libx264',
                     audio_encoder='aac',
                     crf=23,
@@ -48,7 +48,7 @@ convert_mp4_to_m3u8(mp4_filepath,
 #### 参数
 
 - **mp4_filepath**: 字符串或路径, `mp4`文件的路径, 封装参数`ffmpeg -i input.mp4`.
-- **m3u8_filepath**: 字符串或路径, `m3u8`文件的路径, 封装参数`ffmpeg output.m3u8`.
+- **m3u8_directory**: 字符串或路径, `m3u8`文件夹的路径, 封装参数`ffmpeg output.m3u8`.
 - **video_encoder**: 字符串, 默认为`'libx264'`, 视频编码器, 封装参数`ffmpeg -c:v libx264`, 支持的编码器请使用`ffmpeg -codecs`查看.
 - **audio_encoder**: 字符串, 默认为`'aac'`, 音频编码器, 封装参数`ffmpeg -c:a aac`, 支持的编码器请使用`ffmpeg -codecs`查看.
 - **crf**: 整数, 默认为`23`, `m3u8`文件的视频压缩质量(Constant Rate Factor), 封装参数`ffmpeg -crf 23`, 取值范围[0, 51], 推荐选择范围[17, 28], 注意crf值越小, 视频质量越高, 转换时间越长.
@@ -57,8 +57,8 @@ convert_mp4_to_m3u8(mp4_filepath,
 - **audio_channels**: 整数, 默认为`2`, `m3u8`文件的音频的声道数, 封装参数`ffmpeg -ac 2`.
 - **m3u8_format**: 字符串, 默认为`'hls'`, 输出文件的封装格式, 封装参数`ffmpeg -f hls`, 支持的封装格式请使用`ffmpeg -formats`查看.
 - **hls_time**: 整数, 默认为`2`, HLS视频流片段的时长, 封装参数`ffmpeg -f hls -hls_time 2`, 仅在输出文件的封装格式为HLS时有效.
-- **hls_playlist_type**: `HLSPlaylistType`字符串, 默认为`'vod'`, HLS视频播放列表的类型, 封装参数`ffmpeg -f hls -hls_playlist_type event`, 仅在输出文件的封装格式为HLS时有效.
-- **hls_segment_filename**: 字符串, 默认为`'stream'`, HLS视频流片段的文件名, 默认格式是`'/path/to/stream_%d.ts'`, 封装参数`ffmpeg -f hls -hls_segment_filename '/path/to/stream_%d.ts'`, 仅在输出文件的封装格式为HLS时有效.
+- **hls_playlist_type**: `HLSPlaylistType`字符串, 默认为`'vod'`, HLS视频播放列表的类型, 封装参数`ffmpeg -f hls -hls_playlist_type vod`, 仅在输出文件的封装格式为HLS时有效.
+- **hls_segment_filename**: 字符串, 默认为`'stream'`, HLS视频流片段的文件名, 默认格式是`'m3u8_directory/stream_%d.ts'`, 封装参数`ffmpeg -f hls -hls_segment_filename 'm3u8_directory/stream_%d.ts'`, 仅在输出文件的封装格式为HLS时有效.
 
 #### 返回
 

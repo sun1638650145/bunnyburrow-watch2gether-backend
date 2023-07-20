@@ -11,22 +11,22 @@ Mode = Literal['error', 'info']
 
 
 def convert_command(mp4_file: str,
-                    m3u8_file: str):
+                    m3u8_dir: str):
     """视频格式转换命令, 简化ffmpeg的使用,
     复杂功能请使用Python脚本模式.
 
     Example:
         ```shell
-        w2g-cli convert ./flower.mp4 ./flower/flower.m3u8
+        w2g-cli convert ./flower.mp4 ./flower/
         ```
 
     Args:
         mp4_file: str,
             mp4文件的路径.
-        m3u8_file: str,
-            m3u8文件的路径.
+        m3u8_dir: str,
+            m3u8文件夹的路径.
     """
-    convert_mp4_to_m3u8(mp4_file, m3u8_file)
+    convert_mp4_to_m3u8(mp4_file, m3u8_dir)
 
 
 def help_command(level: Mode):
@@ -43,7 +43,7 @@ Bunnyburrow Software Project(兔窝镇软件计划)
 Copyright 2023 Steve R. Sun. All rights reserved.
 --------------------------------------------------
 usage:
-  w2g-cli convert mp4_file m3u8_file
+  w2g-cli convert mp4_file m3u8_dir
     将视频从mp4格式转换成m3u8格式.
   w2g-cli help
     获取帮助信息.

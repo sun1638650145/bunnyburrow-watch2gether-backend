@@ -6,9 +6,6 @@ on:
   pull_request:
     branches: [ 'master' ]
 
-permissions:
-  contents: read
-
 jobs:
   build:
 
@@ -37,7 +34,7 @@ jobs:
       with:
         lfs: true  # 下载Git LFS缓存.
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4.6.1
+      uses: actions/setup-python@v4.7.0
       with:
         python-version: ${{ matrix.python-version }}
     - name: Before macOS install

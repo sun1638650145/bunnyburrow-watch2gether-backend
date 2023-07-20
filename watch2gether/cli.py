@@ -32,12 +32,12 @@ def _parse_args(args: List[str]) -> argparse.Namespace:
         args = args[1:]
         # 视频格式转换命令.
         parser_convert = subparsers.add_parser('convert',
-                                               usage='w2g-cli convert mp4_file m3u8_file',  # noqa: E501
+                                               usage='w2g-cli convert mp4_file m3u8_dir',  # noqa: E501
                                                description='将视频从mp4格式转换成m3u8格式.')  # noqa: E501
         parser_convert.add_argument('mp4_file',
                                     help='mp4文件的路径.')
-        parser_convert.add_argument('m3u8_file',
-                                    help='m3u8文件的路径.')
+        parser_convert.add_argument('m3u8_dir',
+                                    help='m3u8文件夹的路径.')
 
         # 帮助命令.
         subparsers.add_parser('help',
@@ -71,7 +71,7 @@ def run():
         meta_data = _parse_args(sys.argv)
 
         if meta_data.command == 'convert':
-            convert_command(meta_data.mp4_file, meta_data.m3u8_file)
+            convert_command(meta_data.mp4_file, meta_data.m3u8_dir)
         elif meta_data.command == 'help':
             help_command('info')
         elif meta_data.command == 'launch':
