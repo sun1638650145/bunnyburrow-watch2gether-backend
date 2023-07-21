@@ -91,6 +91,9 @@ def launch_command(video_dir: Union[str, os.PathLike],
     # 通过修改全局变量传递流媒体视频文件夹路径给流媒体服务.
     streaming.video_directory = video_dir
 
+    logger.info(f'流媒体服务:     成功启动在 http://{host}:{port}/video/{Path(video_dir).stem}/')  # noqa: E501
+    logger.info(f'WebSocket服务: 成功启动在 ws://{host}:{port}/ws/')
+
     run(app, host=host, port=port, log_level='error')
 
 
