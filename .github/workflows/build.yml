@@ -64,7 +64,7 @@ jobs:
       run: |
         pip install .
       if: runner.os == 'Windows'
-    - name: Lint with flake8 and generate coverage report
+    - name: Lint with flake8
       run: |
         flake8 . --count
     - name: Test with pytest and generate coverage report

@@ -97,6 +97,10 @@ HTTP重定向到`/file/{video_name}.m3u8`.
 
 `ts`文件视频流.
 
+#### 异常
+
+**HTTPException 404**: 如果文件不存在, 则向客户端返回`404`错误.
+
 ### *(WEBSOCKET)* /ws/
 
 创建`WebSocket`服务器.

@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 
 from fastapi import APIRouter
+from fastapi import HTTPException
 from fastapi import Request
 from fastapi.responses import FileResponse, RedirectResponse
 
@@ -41,9 +42,15 @@ async def create_vod_streaming(request: Request,
 
     Return:
         ts文件视频流.
+
+    Raises:
+        HTTPException 404: 如果文件不存在, 则向客户端返回`404`错误.
     """
     # TODO(Steve): 通过修改全局变量传递视频文件夹路径给流媒体媒体服务, 耦合较高.
     file_path = os.path.join(Path(video_directory), file_name)
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404)
+
     response = FileResponse(file_path)
 
     logger.info(f'{get_current_time()}: '
