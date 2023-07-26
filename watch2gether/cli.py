@@ -21,9 +21,15 @@ def _parse_args(args: List[str]) -> argparse.Namespace:
     Return:
         命令行解析后的参数Namespace字典.
     """
-    parser = argparse.ArgumentParser(usage='w2g-cli {convert, help, launch, one, version}',  # noqa: E501
-                                     add_help=False,
-                                     exit_on_error=False)
+    try:
+        parser = argparse.ArgumentParser(usage='w2g-cli {convert, help, launch, one, version}',  # noqa: E501
+                                         add_help=False,
+                                         exit_on_error=False)
+    except TypeError:
+        # 处理Python 3.8的兼容性问题.
+        parser = argparse.ArgumentParser(usage='w2g-cli {convert, help, launch, one, version}',  # noqa: E501
+                                         add_help=False)
+
     subparsers = parser.add_subparsers(dest='command')
 
     if len(args) < 2:  # 没有参数.
