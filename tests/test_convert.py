@@ -1,4 +1,6 @@
 """测试转换功能."""
+import pytest
+
 import watch2gether as w2g
 
 
@@ -19,3 +21,12 @@ class TestConvert(object):
             hls_playlist_type='vod',
             hls_segment_filename='stream'
         )
+
+        # mp4文件路径信息填写错误.
+        with pytest.raises(SystemExit) as pytest_exit:
+            w2g.convert_mp4_to_m3u8(
+                mp4_filepath='./tests/flower.mp4',
+                m3u8_directory='./tests/assets/flower/',
+            )
+        assert pytest_exit.type is SystemExit
+        assert pytest_exit.value.code == 127

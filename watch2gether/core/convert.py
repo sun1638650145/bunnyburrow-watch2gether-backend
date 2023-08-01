@@ -86,7 +86,7 @@ def convert_mp4_to_m3u8(mp4_filepath: Union[str, os.PathLike],
     try:
         subprocess.run(cmd, check=True, shell=True)
     except subprocess.CalledProcessError:
-        logger.error('没有找到ffmpeg命令, 请安装ffmpeg后重试.')
+        logger.error('没有找到ffmpeg命令或mp4文件不存在.')
         sys.exit(127)
 
     return Path(m3u8_directory).absolute()
