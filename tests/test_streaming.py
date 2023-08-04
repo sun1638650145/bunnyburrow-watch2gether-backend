@@ -13,5 +13,9 @@ class TestStreaming(object):
             m3u8_directory='./tests/assets/flower/'
         )
 
+        # 请求成功.
         response = client.get('/video/flower/')
         assert response.status_code == 200
+        # 请求的资源不存在.
+        response = client.get('/flower/')
+        assert response.status_code == 404
