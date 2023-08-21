@@ -53,7 +53,7 @@ def _parse_args(args: List[str]) -> argparse.Namespace:
 
         # 启动服务命令.
         parser_launch = subparsers.add_parser('launch',
-                                              usage='w2g-cli launch [--host] [--port] video_dir',  # noqa: E501
+                                              usage='w2g-cli launch [--host] [--port] [--origins] video_dir',  # noqa: E501
                                               description='启动流媒体服务和WebSocket服务.')  # noqa: E501
         parser_launch.add_argument('streaming_video',
                                    help='流媒体视频文件夹路径.')
@@ -63,10 +63,14 @@ def _parse_args(args: List[str]) -> argparse.Namespace:
         parser_launch.add_argument('--port',
                                    default=8000,
                                    help='绑定的端口号, 默认为8000.')
+        parser_launch.add_argument('--origins',
+                                   nargs='+',
+                                   default=[],
+                                   help='CORS(跨域资源共享)允许的源列表, 默认为空.')
 
         # one命令.
         parser_one = subparsers.add_parser('one',
-                                           usage='w2g-cli one [--host] [--port] mp4_file',  # noqa: E501
+                                           usage='w2g-cli one [--host] [--port] [--origins] mp4_file',  # noqa: E501
                                            description='自动处理mp4视频并启动流媒体服务和WebSocket服务.')  # noqa: E501
         parser_one.add_argument('mp4_file',
                                 help='mp4文件的路径.')
@@ -76,6 +80,10 @@ def _parse_args(args: List[str]) -> argparse.Namespace:
         parser_one.add_argument('--port',
                                 default=8000,
                                 help='绑定的端口号, 默认为8000.')
+        parser_one.add_argument('--origins',
+                                nargs='+',
+                                default=[],
+                                help='CORS(跨域资源共享)允许的源列表, 默认为空.')
 
         # 查看版本命令.
         subparsers.add_parser('version',
@@ -97,11 +105,13 @@ def run():
         elif meta_data.command == 'launch':
             launch_command(meta_data.streaming_video,
                            meta_data.host,
-                           meta_data.port)
+                           meta_data.port,
+                           meta_data.origins)
         elif meta_data.command == 'one':
             one_command(meta_data.mp4_file,
                         meta_data.host,
-                        meta_data.port)
+                        meta_data.port,
+                        meta_data.origins)
         elif meta_data.command == 'version':
             version_command()
     except argparse.ArgumentError:
