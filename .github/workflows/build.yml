@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]  # macos-12, ubuntu-22.04, windows-2022
+        os: [macos-latest, ubuntu-latest, windows-latest] # macos-12, ubuntu-22.04, windows-2022
         python-version: ['3.8', '3.9', '3.10', '3.11']
         exclude:
           - os: macos-latest
@@ -30,9 +30,9 @@ jobs:
             python-version: '3.11'
 
     steps:
-    - uses: actions/checkout@v3.5.3
+    - uses: actions/checkout@v3.6.0
       with:
-        lfs: true  # 下载Git LFS缓存.
+        lfs: true # 下载Git LFS缓存.
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4.7.0
       with:
@@ -67,8 +67,8 @@ jobs:
     - name: Lint with flake8
       run: |
         flake8 . --count
-    - name: Test with pytest and generate coverage report
+    - name: Test with pytest and generate coverage reports
       run: |
         coverage run -m pytest
-    - name: Upload coverage to Codecov
+    - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v3.1.4

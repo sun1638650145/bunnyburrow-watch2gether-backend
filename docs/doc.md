@@ -1,8 +1,19 @@
 # 一起看电影(backend) 🎦
 
-[![build](https://github.com/sun1638650145/bunnyburrow-watch2gether-backend/actions/workflows/build.yml/badge.svg)](https://github.com/sun1638650145/bunnyburrow-watch2gether-backend/actions/workflows/build.yml) [![codecov](https://codecov.io/gh/sun1638650145/bunnyburrow-watch2gether-backend/branch/master/graph/badge.svg?token=2OCJQLENZ5)](https://codecov.io/gh/sun1638650145/bunnyburrow-watch2gether-backend)
+[![build](https://github.com/sun1638650145/bunnyburrow-watch2gether-backend/actions/workflows/build.yml/badge.svg)](https://github.com/sun1638650145/bunnyburrow-watch2gether-backend/actions/workflows/build.yml) [![package](https://github.com/sun1638650145/bunnyburrow-watch2gether-backend/actions/workflows/package.yml/badge.svg)](https://github.com/sun1638650145/bunnyburrow-watch2gether-backend/actions/workflows/package.yml) [![codecov](https://codecov.io/gh/sun1638650145/bunnyburrow-watch2gether-backend/branch/master/graph/badge.svg?token=2OCJQLENZ5)](https://codecov.io/gh/sun1638650145/bunnyburrow-watch2gether-backend)
 
 一起看电影是Bunnyburrow Software Project(兔窝镇软件计划)的第3个组件, 你可以使用它创建流媒体服务并和朋友们一起看. 
+
+## 安装
+
+仅需要`Python`环境, 在发布页下载最新的稳定版`whl`文件即可.
+
+```shell
+# 安装插件.
+pip install https://github.com/sun1638650145/bunnyburrow-watch2gether-backend/releases/download/v0.1b0/watch2gether-0.1b0-py3-none-any.whl
+# 强烈推荐安装到虚拟环境, 并添加环境变量到shell.
+echo alias w2g-cli=/path/to/bin/w2g-cli >> .zshrc
+```
 
 ## 使用方法
 
