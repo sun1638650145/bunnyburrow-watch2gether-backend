@@ -28,6 +28,11 @@ class WebSocketConnectionManager(object):
         await websocket.accept()
         self.active_connections.append(websocket)
 
+        # 向全部WebSocket客户端广播当前的客户端数量.
+        await self.broadcast({
+            'active_connections': len(self.active_connections)
+        })
+
         logger.info(f'{get_current_time()}: 客户端'
                     f'({websocket.client.host}:{websocket.client.port})连接成功.')
 
