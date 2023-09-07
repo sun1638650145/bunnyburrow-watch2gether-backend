@@ -136,10 +136,13 @@ HTTP重定向到`/file/{video_name}.m3u8`.
 
 **HTTPException 404**: 如果文件不存在, 则向客户端返回`404`错误.
 
-#### *(WEBSOCKET)* /ws/
+#### *(WEBSOCKET)* /ws/{client_id}/
 
 创建`WebSocket`服务器.
 
 ##### 参数
 
 - `websocket`: `WebSocket`实例, 一个`websocket`连接(系统维护, 不需要手动传参).
+
+- `client_id`: 整数, `websocket`客户端ID, 仅用于标识连接的客户端.
+

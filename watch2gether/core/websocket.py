@@ -28,13 +28,10 @@ class WebSocketConnectionManager(object):
         await websocket.accept()
         self.active_connections.append(websocket)
 
-        # 向全部WebSocket客户端广播当前的客户端数量.
-        await self.broadcast({
-            'active_connections': len(self.active_connections)
-        })
-
         logger.info(f'{get_current_time()}: 客户端'
                     f'({websocket.client.host}:{websocket.client.port})连接成功.')
+        logger.info(f'{get_current_time()}: '
+                    f'当前活跃的连接数为{len(self.active_connections)}.')
 
     def disconnect(self, websocket: WebSocket):
         """断开WebSocket客户端连接.
@@ -47,6 +44,8 @@ class WebSocketConnectionManager(object):
 
         logger.info(f'{get_current_time()}: 客户端'
                     f'({websocket.client.host}:{websocket.client.port})断开连接.')
+        logger.info(f'{get_current_time()}: '
+                    f'当前活跃的连接数为{len(self.active_connections)}.')
 
     async def broadcast(self,
                         data: dict,
@@ -74,13 +73,15 @@ router = APIRouter()
 manager = WebSocketConnectionManager()  # 实例化WebSocket连接管理器.
 
 
-@router.websocket('/ws/')
-async def create_websocket_endpoint(websocket: WebSocket):
+@router.websocket('/ws/{client_id}/')
+async def create_websocket_endpoint(websocket: WebSocket, client_id: int):
     """创建WebSocket服务器.
 
     Args:
         websocket: WebSocket,
             一个websocket连接.
+        client_id: int,
+            websocket客户端ID, 仅用于标识连接的客户端.
     """
     await manager.connect(websocket)
 
