@@ -14,7 +14,7 @@ class TestWebSocket(object):
         manager = w2g.websocket.manager
         test_data = {'msg': 'Hello, World!'}
 
-        with client.websocket_connect(f'/ws/{client_id}') as websocket:
+        with client.websocket_connect(f'/ws/{client_id}/') as websocket:
             await manager.broadcast(test_data, None)
 
             data = websocket.receive_json()
