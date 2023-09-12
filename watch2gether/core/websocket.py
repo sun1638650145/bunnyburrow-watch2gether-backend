@@ -72,22 +72,24 @@ class WebSocketConnectionManager(object):
             client_message = ''
         logger.info(f'{get_current_time()}: 客户端{client_message}广播数据.')
 
-    async def unicast(self,
-                      data: dict,
-                      client_id: int):
+    async def unicast(self, data: dict, client_id: int, target_client_id: int):
         """对连接的WebSocket客户端进行单播(传输JSON数据).
 
         Args:
             data: dict,
                 广播的数据(JSON格式).
             client_id: int,
+                发送单播的websocket客户端ID.
+            target_client_id: int,
                 接收单播的WebSocket客户端ID.
         """
-        connection = self.active_connections[client_id]
+        connection = self.active_connections[target_client_id]
         await connection.send_json(data)
 
-        logger.info(f'{get_current_time()}: 向客户端'
-                    f'({connection.client.host}:{connection.client.port})单播数据.')  # noqa: E501
+        logger.info(f'{get_current_time()}: 客户端'
+                    f'({self.active_connections[client_id].client.host}'
+                    f':{self.active_connections[client_id].client.port})'
+                    f'向客户端({connection.client.host}:{connection.client.port})单播数据.')  # noqa: E501
 
 
 router = APIRouter()
@@ -110,13 +112,13 @@ async def create_websocket_endpoint(websocket: WebSocket, client_id: int):
         while True:
             # 接收并转发数据.
             data = await websocket.receive_json()
-            target_client_id = data['data'].get('to')
+            target_client_id = data['meta'].get('to')
 
             if target_client_id:
                 # 单播模式.
-                await manager.unicast(data, target_client_id)
+                await manager.unicast(data, client_id, target_client_id)
             else:
                 # 广播模式.
-                await manager.broadcast(data, client_id)
+                await manager.broadcast(data, exclude_client_id=client_id)
     except WebSocketDisconnect:
         manager.disconnect(client_id)
