@@ -96,6 +96,25 @@ router = APIRouter()
 manager = WebSocketConnectionManager()  # 实例化WebSocket连接管理器.
 
 
+def generate_logout_data(client_id: int) -> dict:
+    """生成用户异常退出时的数据.
+
+    Args:
+        client_id: int,
+            websocket客户端ID, 异常退出连接的客户端.
+
+    Return:
+        用户退出的数据(JSON数据).
+    """
+    return dict({
+        'data': {
+            'msg': 'logout',
+            'user': {'clientID': client_id}
+        },
+        'meta': {'type': 'shake_hand'}
+    })
+
+
 @router.websocket('/ws/{client_id}/')
 async def create_websocket_endpoint(websocket: WebSocket, client_id: int):
     """创建WebSocket服务器.
@@ -122,3 +141,5 @@ async def create_websocket_endpoint(websocket: WebSocket, client_id: int):
                 await manager.broadcast(data, exclude_client_id=client_id)
     except WebSocketDisconnect:
         manager.disconnect(client_id)
+        # 与WebSocket服务器异常断开连接, 广播用户退出消息.
+        await manager.broadcast(generate_logout_data(client_id))
