@@ -10,7 +10,7 @@
 
 ```shell
 # 安装插件.
-pip install https://github.com/sun1638650145/bunnyburrow-watch2gether-backend/releases/download/v0.1b0/watch2gether-0.1b0-py3-none-any.whl
+pip install https://github.com/sun1638650145/bunnyburrow-watch2gether-backend/releases/download/v0.1b1/watch2gether-0.1b1-py3-none-any.whl
 # 强烈推荐安装到虚拟环境, 并添加环境变量到shell.
 echo alias w2g-cli=/path/to/bin/w2g-cli >> .zshrc
 ```
@@ -145,4 +145,3 @@ HTTP重定向到`/file/{video_name}.m3u8`.
 - `websocket`: `WebSocket`实例, 一个`websocket`连接(系统维护, 不需要手动传参).
 
 - `client_id`: 整数, `websocket`客户端ID, 仅用于标识连接的客户端.
-
