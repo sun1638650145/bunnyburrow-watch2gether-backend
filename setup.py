@@ -5,7 +5,7 @@ with open('README.md', 'r', encoding='utf-8') as fp:
 
 setup(
     name='watch2gether',
-    version='0.1b1',
+    version='0.1b2',
     description='一起看电影',
     long_description=long_description,
     long_description_content_type='text/markdown',
