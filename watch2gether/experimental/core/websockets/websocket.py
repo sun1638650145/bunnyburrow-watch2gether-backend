@@ -30,7 +30,8 @@ async def create_websocket_endpoint(client_id: int, websocket: WebSocket):
         await manager.connect(client_id, websocket)
 
         try:
-            # 接收并转发数据.
-            data = await websocket.receive_json()  # noqa: F841
+            while True:
+                # 接收并转发数据.
+                data = await websocket.receive_json()  # noqa: F841
         except WebSocketDisconnect:
             manager.disconnect(client_id)
