@@ -1,4 +1,6 @@
-from typing import Dict
+import asyncio
+
+from typing import Dict, Optional
 
 from fastapi import WebSocket
 
@@ -9,7 +11,7 @@ class ConnectionManager(object):
     """WebSockets连接管理器.
 
     Attributes:
-        active_connections: dict[int, WebSocket],
+        active_connections: Dict[int, WebSocket],
             用于存储活跃的WebSocket连接的信息, 键值对为客户端ID和WebSocket实例.
     """
     def __init__(self):
@@ -42,3 +44,30 @@ class ConnectionManager(object):
 
         logger.info(f'客户端({websocket.client.host}:{websocket.client.port})断开连接.')  # noqa: E501
         logger.info(f'当前活跃的连接数为{len(self.active_connections)}.')
+
+    async def broadcast(self,
+                        data: Dict,
+                        client_id: Optional[int] = None):
+        """广播数据.
+
+        Args:
+            data: Dict,
+                广播的数据(使用JSON格式).
+            client_id: int, default=None,
+                (可选)广播数据的客户端, 填写此参数则不对自身广播.
+        """
+        await_tasks = []
+        for received_client_id, websocket in self.active_connections.items():
+            if client_id != received_client_id:  # 避免广播风暴.
+                await_tasks.append(
+                    asyncio.create_task(websocket.send_json(data))
+                )
+
+        # 并发运行, 广播数据.
+        await asyncio.gather(*await_tasks)
+
+        websocket = self.active_connections.get(client_id)  # 获取广播数据的客户端.
+        if websocket:
+            logger.info(f'客户端({websocket.client.host}:{websocket.client.port})广播数据.')  # noqa: E501
+        else:
+            logger.warning('广播数据(包含自身客户端)!')
