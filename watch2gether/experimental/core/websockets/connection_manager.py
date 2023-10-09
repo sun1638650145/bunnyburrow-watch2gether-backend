@@ -45,9 +45,7 @@ class ConnectionManager(object):
         logger.info(f'客户端({websocket.client.host}:{websocket.client.port})断开连接.')  # noqa: E501
         logger.info(f'当前活跃的连接数为{len(self.active_connections)}.')
 
-    async def broadcast(self,
-                        data: Dict,
-                        client_id: Optional[int] = None):
+    async def broadcast(self, data: Dict, client_id: Optional[int] = None):
         """广播数据.
 
         Args:
@@ -71,3 +69,24 @@ class ConnectionManager(object):
             logger.info(f'客户端({websocket.client.host}:{websocket.client.port})广播数据.')  # noqa: E501
         else:
             logger.warning('广播数据(包含自身客户端)!')
+
+    async def unicast(self,
+                      data: Dict,
+                      client_id: int,
+                      received_client_id: int):
+        """单播数据.
+
+        Args:
+            data: Dict,
+                单播的数据(使用JSON格式).
+            client_id: int,
+                发起单播的客户端ID.
+            received_client_id: int,
+                接收单播的客户端ID.
+        """
+        websocket = self.active_connections.get(client_id)
+        received_websocket = self.active_connections.get(received_client_id)
+        await received_websocket.send_json(data)
+
+        logger.info(f'客户端({websocket.client.host}:{websocket.client.port})向'
+                    f'客户端({received_websocket.client.host}:{received_websocket.client.port})单播数据.')  # noqa: E501
