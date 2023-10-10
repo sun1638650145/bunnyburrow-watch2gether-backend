@@ -84,9 +84,12 @@ class ConnectionManager(object):
             received_client_id: int,
                 接收单播的客户端ID.
         """
-        websocket = self.active_connections.get(client_id)
-        received_websocket = self.active_connections.get(received_client_id)
-        await received_websocket.send_json(data)
+        try:
+            websocket = self.active_connections.get(client_id)
+            received_websocket = self.active_connections.get(received_client_id)  # noqa: E501
+            await received_websocket.send_json(data)
 
-        logger.info(f'客户端({websocket.client.host}:{websocket.client.port})向'
-                    f'客户端({received_websocket.client.host}:{received_websocket.client.port})单播数据.')  # noqa: E501
+            logger.info(f'客户端({websocket.client.host}:{websocket.client.port})'
+                        f'向客户端({received_websocket.client.host}:{received_websocket.client.port})单播数据.')  # noqa: E501
+        except AttributeError:
+            logger.error('接收单播的客户端不存在!')

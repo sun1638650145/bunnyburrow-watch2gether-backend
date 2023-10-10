@@ -31,8 +31,15 @@ async def create_websocket_endpoint(client_id: int, websocket: WebSocket):
 
         try:
             while True:
-                # 接收并转发数据.
                 data = await websocket.receive_json()
-                await manager.broadcast(data, client_id)
+                props = data.get('props')
+                received_client_id = props.get('receivedClientID', -1)
+
+                # 对工作类型进行判断.
+                if (props.get('type') == 'websocket.unicast'
+                        and received_client_id > 0):
+                    await manager.unicast(data, client_id, received_client_id)
+                else:
+                    await manager.broadcast(data, client_id)
         except WebSocketDisconnect:
             manager.disconnect(client_id)
