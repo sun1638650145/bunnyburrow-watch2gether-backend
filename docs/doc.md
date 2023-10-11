@@ -138,10 +138,10 @@ HTTP重定向到`/file/{video_name}.m3u8`.
 
 #### *(WEBSOCKET)* /ws/{client_id}/
 
-创建`WebSocket`服务器.
+创建`WebSocket`服务.
 
 ##### 参数
 
-- `websocket`: `WebSocket`实例, 一个`websocket`连接(系统维护, 不需要手动传参).
+- `client_id`: 整数, `WebSocket`客户端ID.
 
-- `client_id`: 整数, `websocket`客户端ID, 仅用于标识连接的客户端.
+- `websocket`: `WebSocket`, `WebSocket`实例.

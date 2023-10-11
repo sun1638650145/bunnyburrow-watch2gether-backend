@@ -2,14 +2,14 @@ from fastapi import APIRouter
 from fastapi import WebSocket, WebSocketDisconnect
 
 from watch2gether import experimental_logger as logger
-from watch2gether.experimental.core.websockets import ConnectionManager
+from watch2gether.core.websockets import ConnectionManager
 
 
 router = APIRouter()
 manager = ConnectionManager()  # 实例化WebSocket连接管理器.
 
 
-@router.websocket('/experimental/ws/{client_id}/')
+@router.websocket('/ws/{client_id}/')
 async def create_websocket_endpoint(client_id: int, websocket: WebSocket):
     """创建WebSocket服务.
 

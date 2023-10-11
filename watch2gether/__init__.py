@@ -12,19 +12,15 @@ logger = logging.getLogger()
 
 from fastapi import FastAPI
 
-from watch2gether.core import convert_mp4_to_m3u8
-from watch2gether.core import streaming
-from watch2gether.core import websocket
-
 from watch2gether.experimental.logger import Logger
-
 # 设置新系统logger.
 experimental_logger = Logger('watch2gether')
 
-from watch2gether.experimental.core.websockets import websocket as experimental_websocket  # noqa: E501
+from watch2gether.core import convert_mp4_to_m3u8
+from watch2gether.core import streaming
+from watch2gether.core import websocket
 
 app = FastAPI(version=__version__)
 # 导入路由.
 app.include_router(streaming.router)
 app.include_router(websocket.router)
-app.include_router(experimental_websocket.router)
