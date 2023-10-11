@@ -30,5 +30,5 @@ setup(
         'uvicorn>=0.22.0, <=0.23.2',
         'websockets>=10.4, <=11.0.3',
     ],
-    python_requires='>=3.8',
+    python_requires='>=3.9',
 )
