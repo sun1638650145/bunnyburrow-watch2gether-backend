@@ -1,21 +1,28 @@
 """测试流媒体服务."""
+from pathlib import Path
+
+import pytest
 from fastapi.testclient import TestClient
 
 import watch2gether as w2g
 
 
+w2g.streaming.videos_directory = Path('./tests/assets/')
+
+
 class TestStreaming(object):
-    def test_streaming(self):
+    @pytest.mark.parametrize(
+        'url, expected_status_code',
+        [
+            ('/video/flower/', 200),
+            ('/videos/flower/flower.m3u8', 200),
+            ('/flower/', 404),
+            ('/videos/flower/flower.m3u', 404)
+        ]
+    )
+    async def test_streaming(self, url, expected_status_code):
         """测试流媒体服务."""
         client = TestClient(w2g.app)
-        w2g.streaming.video_directory = w2g.convert_mp4_to_m3u8(
-            mp4_filepath='./tests/assets/flower.mp4',
-            m3u8_directory='./tests/assets/flower/'
-        )
 
-        # 请求成功.
-        response = client.get('/video/flower/')
-        assert response.status_code == 200
-        # 请求的资源不存在.
-        response = client.get('/flower/')
-        assert response.status_code == 404
+        response = client.get(url)
+        assert response.status_code == expected_status_code
