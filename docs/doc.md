@@ -99,12 +99,12 @@ convert_mp4_to_m3u8(mp4_filepath,
 
 `m3u8`文件夹的绝对路径.
 
-#### streaming.video_directory
+#### streaming.videos_directory
 
-视频文件夹路径.
+全部流媒体视频的文件夹.
 
 ```python
-streaming.video_directory = '/path/to/video_directory/'
+streaming.videos_directory = '/path/to/videos_directory/'
 ```
 
 #### *(GET)* /video/{video_name}/
@@ -117,20 +117,21 @@ streaming.video_directory = '/path/to/video_directory/'
 
 ##### 返回
 
-HTTP重定向到`/file/{video_name}.m3u8`.
+HTTP重定向到`/videos/{video_name}/{video_name}.m3u8`.
 
-#### *(GET)* /file/{file_name}
+#### *(GET)* /videos/{video_directory}/{file_name}
 
 创建流媒体(点播)服务.
 
 ##### 参数
 
-- **request**: `Request`实例, 一个Request请求(系统维护, 不需要手动传参).
-- **file_name**: 字符串, `m3u8`文件名称(路径参数), 用于访问播放的流媒体视频的`m3u8`索引.
+- **request**: `Request`实例, 当前的`Request`请求.
+- **video_directory**: 字符串, 流媒体视频`m3u8`索引文件和`ts`文件所处的文件夹(路径参数), 一般和视频同名.
+- **file_name**: 字符串, 请求的文件名(路径参数), 一般只需要请求`视频名.m3u8`即可.
 
 ##### 返回
 
-`ts`文件视频流.
+自动顺序返回流媒体视频流.
 
 ##### 异常
 
