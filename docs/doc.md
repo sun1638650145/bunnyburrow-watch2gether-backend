@@ -27,7 +27,7 @@ echo alias w2g-cli=/path/to/bin/w2g-cli >> .zshrc
 # 将视频从mp4格式转换成m3u8格式.
 w2g-cli convert ./我们亲爱的Steve.mp4 ./我们亲爱的Steve/
 # 监听所有主机地址, 启动流媒体和WebSocket服务.
-w2g-cli launch --host 0.0.0.0 ./我们亲爱的Steve/
+w2g-cli launch --host 0.0.0.0 ./
 ```
 
 同时, 如果你第一次启动可以考虑更简化的`one`命令, `one`命令将在当前目录下自动处理并生成`m3u8`格式视频.

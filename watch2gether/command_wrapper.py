@@ -73,7 +73,7 @@ usage:
         logger.info(_help_msg)
 
 
-def launch_command(video_dir: Union[str, os.PathLike],
+def launch_command(videos_dir: Union[str, os.PathLike],
                    host: str,
                    port: int,
                    origins: List[str]):
@@ -85,7 +85,7 @@ def launch_command(video_dir: Union[str, os.PathLike],
         ```
 
     Args:
-        video_dir: str or os.PathLike,
+        videos_dir: str or os.PathLike,
             流媒体视频文件夹路径.
         host: str,
             使用的主机地址.
@@ -105,9 +105,9 @@ def launch_command(video_dir: Union[str, os.PathLike],
         )
 
     # 通过修改全局变量传递流媒体视频文件夹路径给流媒体服务.
-    streaming.video_directory = video_dir
+    streaming.videos_directory = videos_dir
 
-    logger.info(f'流媒体服务: 成功启动在 http://{host}:{port}/video/{Path(video_dir).stem}/')  # noqa: E501
+    logger.info(f'流媒体服务: 成功启动在 http://{host}:{port}/video/')  # noqa: E501
     logger.info(f'WebSocket服务: 成功启动在 ws://{host}:{port}/ws/')
 
     run(app, host=host, port=port, log_level='error')
@@ -134,10 +134,10 @@ def one_command(mp4_file: str,
         origins: list of str,
             CORS(跨域资源共享)允许的源列表.
     """
-    video_dir = convert_mp4_to_m3u8(mp4_file,
-                                    Path(mp4_file).stem)  # 默认使用文件名作为m3u8文件名.
+    videos_dir = convert_mp4_to_m3u8(mp4_file,
+                                     Path(mp4_file).stem)  # 默认使用文件名作为m3u8文件名.
     # 调用launch_command实现代码复用.
-    launch_command(video_dir, host, port, origins)
+    launch_command(videos_dir.parent, host, port, origins)
 
 
 def version_command():
