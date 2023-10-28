@@ -48,7 +48,7 @@ import uvicorn
 # 将mp4视频转换为流媒体视频.
 m3u8_dir = w2g.convert_mp4_to_m3u8('./我们亲爱的Steve.mp4', './我们亲爱的Steve/')
 # 设置流媒体视频文件夹的路径.
-w2g.streaming.video_directory = m3u8_dir
+w2g.streaming.videos_directory = m3u8_dir.parent
 # 启动流媒体服务和WebSocket服务.
 uvicorn.run(app=w2g.app,
             host='0.0.0.0',
