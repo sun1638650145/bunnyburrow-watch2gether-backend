@@ -19,6 +19,7 @@ experimental_logger = Logger('watch2gether')
 from watch2gether.core import convert_mp4_to_m3u8
 from watch2gether.core import streaming
 from watch2gether.core import websocket
+from watch2gether.experimental.core.convert import convert_mp4_to_m3u8 as experimental_convert_mp4_to_m3u8  # noqa: E501
 
 app = FastAPI(version=__version__)
 # 导入路由.
