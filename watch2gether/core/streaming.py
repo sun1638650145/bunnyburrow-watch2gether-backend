@@ -51,13 +51,14 @@ async def create_vod_streaming_endpoint(request: Request,
     """
     # TODO(Steve): 通过修改全局变量传递流媒体视频文件夹路径, 耦合较高.
     file_path = os.path.join(videos_directory, video_directory, file_name)
-    if not os.path.exists(file_path):
+
+    if os.path.exists(file_path):
+        logger.info(f'客户端({request.client.host}:{request.client.port})\n'
+                    f'请求文件:{file_path} 响应状态码: 200.')
+
+        return FileResponse(file_path)
+    else:
         logger.warning(f'客户端({request.client.host}:{request.client.port})\n'
                        f'请求不存在文件:{file_path} 响应状态码: 404.')
 
         raise HTTPException(status_code=404)
-
-    logger.info(f'客户端({request.client.host}:{request.client.port})\n'
-                f'请求文件:{file_path} 响应状态码: 200.')
-
-    return FileResponse(file_path)
