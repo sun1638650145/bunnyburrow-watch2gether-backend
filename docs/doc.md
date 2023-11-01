@@ -46,9 +46,9 @@ import watch2gether as w2g
 import uvicorn
 
 # 将mp4视频转换为流媒体视频.
-m3u8_dir = w2g.convert_mp4_to_m3u8('./我们亲爱的Steve.mp4', './我们亲爱的Steve/')
+videos_directory = w2g.convert_mp4_to_m3u8('./我们亲爱的Steve.mp4', './我们亲爱的Steve/')
 # 设置流媒体视频文件夹的路径.
-w2g.streaming.videos_directory = m3u8_dir.parent
+w2g.streaming.videos_directory = videos_directory
 # 启动流媒体服务和WebSocket服务.
 uvicorn.run(app=w2g.app,
             host='0.0.0.0',
@@ -74,6 +74,7 @@ convert_mp4_to_m3u8(mp4_filepath,
                     preset='veryfast',
                     bitrate=128,
                     audio_channels=2,
+                    log_level='error',
                     m3u8_format='hls',
                     hls_time=2,
                     hls_playlist_type='vod',
@@ -90,6 +91,7 @@ convert_mp4_to_m3u8(mp4_filepath,
 - **preset**: `Preset`字符串, 默认为`'veryfast'`, 编码速度与压缩比, 封装参数`ffmpeg -preset veryfast`.
 - **bitrate**: 整数, 默认为`128`, `m3u8`文件的音频的比特率, 单位为kbit/s. 封装参数`ffmpeg -b:a 128k`.
 - **audio_channels**: 整数, 默认为`2`, `m3u8`文件的音频的声道数, 封装参数`ffmpeg -ac 2`.
+- **log_level**: `LogLevel`字符串, 默认为`'error'`, 设置使用的日志记录级别, 封装参数`ffmpeg -loglevel error`.
 - **m3u8_format**: 字符串, 默认为`'hls'`, 输出文件的封装格式, 封装参数`ffmpeg -f hls`, 支持的封装格式请使用`ffmpeg -formats`查看.
 - **hls_time**: 整数, 默认为`2`, HLS视频流片段的时长, 封装参数`ffmpeg -f hls -hls_time 2`, 仅在输出文件的封装格式为HLS时有效.
 - **hls_playlist_type**: `HLSPlaylistType`字符串, 默认为`'vod'`, HLS视频播放列表的类型, 封装参数`ffmpeg -f hls -hls_playlist_type vod`, 仅在输出文件的封装格式为HLS时有效.
@@ -97,7 +99,7 @@ convert_mp4_to_m3u8(mp4_filepath,
 
 ##### 返回
 
-`m3u8`文件夹的绝对路径.
+`m3u8`文件夹的父文件夹的绝对路径.
 
 #### streaming.videos_directory
 
