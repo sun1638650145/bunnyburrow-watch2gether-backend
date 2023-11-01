@@ -5,9 +5,12 @@ import sys
 from pathlib import Path
 from typing import Literal, Union
 
-from watch2gether import logger
+from watch2gether import experimental_logger as logger
+
 
 HLSPlaylistType = Literal['event', 'vod']
+LogLevel = Literal['quiet', 'panic', 'fatal', 'error', 'warning',
+                   'info', 'verbose', 'debug', 'trace']
 Preset = Literal['ultrafast', 'superfast', 'veryfast', 'faster',
                  'fast', 'medium', 'slow', 'slower', 'veryslow']
 
@@ -20,6 +23,7 @@ def convert_mp4_to_m3u8(mp4_filepath: Union[str, os.PathLike],
                         preset: Preset = 'veryfast',
                         bitrate: int = 128,
                         audio_channels: int = 2,
+                        log_level: LogLevel = 'error',
                         m3u8_format: str = 'hls',
                         hls_time: int = 2,
                         hls_playlist_type: HLSPlaylistType = 'vod',
@@ -45,6 +49,8 @@ def convert_mp4_to_m3u8(mp4_filepath: Union[str, os.PathLike],
             m3u8文件的音频的比特率, 单位为kbit/s. 封装参数`ffmpeg -b:a 128k`.
         audio_channels: int, default=2,
             m3u8文件的音频的声道数, 封装参数`ffmpeg -ac 2`.
+        log_level: LogLevel, default='error',
+            设置使用的日志记录级别, 封装参数`ffmpeg -loglevel error`.
         m3u8_format: str, default='hls',
             输出文件的封装格式, 封装参数`ffmpeg -f hls`, 支持的封装格式请使用`ffmpeg -formats`查看.
         hls_time: int, default=2,
@@ -58,9 +64,10 @@ def convert_mp4_to_m3u8(mp4_filepath: Union[str, os.PathLike],
              仅在输出文件的封装格式为HLS时有效.
 
     Return:
-        m3u8文件夹的绝对路径.
+        m3u8文件夹的父文件夹的绝对路径.
     """
     cmd = 'ffmpeg'
+    cmd += ' -loglevel {}'.format(log_level)
     cmd += ' -i {}'.format(mp4_filepath)
     cmd += ' -c:v {}'.format(video_encoder)
     cmd += ' -crf {}'.format(crf)
@@ -84,9 +91,10 @@ def convert_mp4_to_m3u8(mp4_filepath: Union[str, os.PathLike],
     os.makedirs(Path(m3u8_directory).absolute(), exist_ok=True)
 
     try:
+        logger.info('视频文件正在转换中...')
         subprocess.run(cmd, check=True, shell=True)
     except subprocess.CalledProcessError:
-        logger.error('没有找到ffmpeg命令或mp4文件不存在.')
+        logger.error('没有找到ffmpeg命令或视频文件不存在!')
         sys.exit(127)
 
-    return Path(m3u8_directory).absolute()
+    return Path(m3u8_directory).parent.absolute()
