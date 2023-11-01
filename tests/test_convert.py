@@ -25,7 +25,7 @@ class TestConvert(object):
             hls_segment_filename='stream'
         )
 
-        assert videos_directory == Path('./tests/assets/')
+        assert videos_directory.absolute() == Path('./tests/assets/').absolute()  # noqa: E501
 
     def test_file_not_exists(self):
         """测试视频文件不存在."""
