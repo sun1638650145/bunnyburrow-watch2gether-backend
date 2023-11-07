@@ -22,7 +22,8 @@ setup(
     license='GNU General Public License v2 (GPLv2)',
     entry_points={
         'console_scripts': [
-            'w2g-cli = watch2gether.cli:run'
+            'w2g-cli = watch2gether.cli:run',
+            'experimental-w2g-cli = watch2gether.experimental_cli:run'
         ]
     },
     install_requires=[
