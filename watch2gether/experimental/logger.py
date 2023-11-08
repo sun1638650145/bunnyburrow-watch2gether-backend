@@ -9,7 +9,7 @@ class Logger(logging.Logger):
 
     Attributes:
         file_handler: FileHandler,
-            文件处理器, 将日志保存到文件.
+            文件处理器(默认没有添加需要手动添加), 将日志保存到文件.
         stream_handler: StreamHandler,
             数据流处理器, 将日志输出到终端.
     """
@@ -31,5 +31,4 @@ class Logger(logging.Logger):
         self.stream_handler.setFormatter(formatter)
 
         # 添加处理器.
-        self.addHandler(self.file_handler)
         self.addHandler(self.stream_handler)
