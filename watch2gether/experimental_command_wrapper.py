@@ -19,7 +19,7 @@ Copyright 2023 Steve R. Sun. All rights reserved.
   w2g-cli help
     获取帮助信息.
   w2g-cli version
-    查看命令行工具版本.  
+    查看命令行工具版本.
 """
     logger.info(help_msg)
 
