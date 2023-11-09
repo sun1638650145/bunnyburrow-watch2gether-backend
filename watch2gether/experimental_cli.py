@@ -10,8 +10,8 @@ from watch2gether.experimental_command_wrapper import (
 )
 
 
-class ArgumentParser(argparse.ArgumentParser):
-    """命令行参数解析器(本地化消息)."""
+class LocalizedArgumentParser(argparse.ArgumentParser):
+    """本地化命令行参数解析器."""
     def error(self, message: str):
         """输出使用方法和错误消息.
 
@@ -20,14 +20,32 @@ class ArgumentParser(argparse.ArgumentParser):
                 错误消息.
         """
         message = message.replace('unrecognized arguments', '未识别的参数')
+        message = message.replace('the following arguments are required',
+                                  '需要以下参数')
 
         self.print_usage()
         sys.stderr.write(f'错误: {message}\n')
         sys.exit(2)
 
-    def print_usage(self, **kwargs):
-        """输出使用方法."""
-        sys.stdout.write(f'使用方法: {self.usage}\n')
+    def format_help(self):
+        """格式化帮助信息."""
+        message = super().format_help()
+
+        message = message.replace('usage', '使用方法')
+        message = message.replace('positional arguments', '参数')
+        message = message.replace('optional arguments', '帮助参数')
+        message = message.replace('show this help message and exit',
+                                  '显示帮助信息并退出.')
+
+        return message
+
+    def format_usage(self):
+        """格式化使用方法."""
+        message = super().format_usage()
+
+        message = message.replace('usage', '使用方法')
+
+        return message
 
 
 def parse_args(args: List[str]) -> argparse.Namespace:
@@ -40,9 +58,9 @@ def parse_args(args: List[str]) -> argparse.Namespace:
     Return:
         (解析后)参数组成的容器.
     """
-    parser = ArgumentParser(usage='w2g-cli {convert, help, version}',
-                            add_help=False,
-                            exit_on_error=False)
+    parser = LocalizedArgumentParser(usage='w2g-cli {convert, help, version}',
+                                     add_help=False,
+                                     exit_on_error=False)
     subparsers = parser.add_subparsers(dest='command')
 
     if len(args) < 2:  # 没有参数.
