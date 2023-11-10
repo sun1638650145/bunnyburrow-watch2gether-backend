@@ -6,6 +6,7 @@ from typing import List
 from watch2gether.experimental_command_wrapper import (
     convert_command,
     help_command,
+    launch_command,
     version_command
 )
 
@@ -33,7 +34,7 @@ class LocalizedArgumentParser(argparse.ArgumentParser):
 
         message = message.replace('usage', '使用方法')
         message = message.replace('positional arguments', '参数')
-        message = message.replace('optional arguments', '帮助参数')
+        message = message.replace('optional arguments', '可选参数')
         message = message.replace('show this help message and exit',
                                   '显示帮助信息并退出.')
 
@@ -58,7 +59,7 @@ def parse_args(args: List[str]) -> argparse.Namespace:
     Return:
         (解析后)参数组成的容器.
     """
-    parser = LocalizedArgumentParser(usage='w2g-cli {convert, help, version}',
+    parser = LocalizedArgumentParser(usage='w2g-cli {convert, help, launch, version}',  # noqa: E501
                                      add_help=False,
                                      exit_on_error=False)
     subparsers = parser.add_subparsers(dest='command')
@@ -82,6 +83,25 @@ def parse_args(args: List[str]) -> argparse.Namespace:
                               add_help=False,
                               description='获取帮助信息.')
 
+        # 服务启动命令.
+        launch_parser = subparsers.add_parser('launch',
+                                              usage='w2g-cli launch [--host] [--port] [--origins] [--log_filepath] videos_directory',  # noqa: E501
+                                              description='启动流媒体和WebSocket服务.')
+        launch_parser.add_argument('--host',
+                                   default='127.0.0.1',
+                                   help='使用的主机地址, 默认为127.0.0.1.')
+        launch_parser.add_argument('--port',
+                                   default=8000,
+                                   help='绑定的端口号, 默认为8000.')
+        launch_parser.add_argument('--origins',
+                                   nargs='+',
+                                   default=[],
+                                   help='CORS(跨域资源共享)允许的源列表, 默认为空.')
+        launch_parser.add_argument('--log_filepath',
+                                   default=None,
+                                   help='日志文件的路径, 默认将日志输出到终端.')
+        launch_parser.add_argument('videos_directory', help='全部流媒体视频的文件夹.')
+
         # 查看版本命令.
         subparsers.add_parser('version',
                               usage='w2g-cli version',
@@ -100,6 +120,12 @@ def run():
             convert_command(args.mp4_filepath, args.m3u8_directory)
         elif args.command == 'help':
             help_command()
+        elif args.command == 'launch':
+            launch_command(args.host,
+                           args.port,
+                           args.origins,
+                           args.log_filepath,
+                           args.videos_directory)
         elif args.command == 'version':
             version_command()
     except argparse.ArgumentError:
