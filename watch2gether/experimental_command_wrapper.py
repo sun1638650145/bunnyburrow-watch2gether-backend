@@ -50,11 +50,16 @@ Copyright 2023 Steve R. Sun. All rights reserved.
 使用方法:
   w2g-cli convert mp4_filepath m3u8_directory
     将视频从mp4格式转换成m3u8格式.
+    参数:
+      mp4_filepath: mp4文件的路径.
+      m3u8_directory: m3u8文件夹的路径.
   w2g-cli help
     获取帮助信息.
   w2g-cli launch [--host] [--port] [--origins] [--log_filepath]
           videos_directory
     启动流媒体和WebSocket服务.
+    参数:
+      videos_directory: 全部流媒体视频的文件夹.
     可选参数:
       --host: 使用的主机地址, 默认为127.0.0.1.
       --port: 绑定的端口号, 默认为8000.
@@ -62,6 +67,8 @@ Copyright 2023 Steve R. Sun. All rights reserved.
       --log_filepath: 日志文件的路径, 默认将日志输出到终端.
   w2g-cli one [--host] [--port] [--origins] [--log_filepath] mp4_filepath
     自动转换视频格式并启动流媒体和WebSocket服务.
+    参数:
+      mp4_filepath: mp4文件的路径.
     可选参数:
       --host: 使用的主机地址, 默认为127.0.0.1.
       --port: 绑定的端口号, 默认为8000.
