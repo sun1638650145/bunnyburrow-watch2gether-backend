@@ -1,5 +1,8 @@
+import os
+
 from logging import Formatter
-from typing import List, Optional
+from pathlib import Path
+from typing import List, Optional, Union
 
 from fastapi.middleware.cors import CORSMiddleware
 from uvicorn import run
@@ -57,6 +60,13 @@ Copyright 2023 Steve R. Sun. All rights reserved.
       --port: 绑定的端口号, 默认为8000.
       --origins: CORS(跨域资源共享)允许的源列表, 默认为空.
       --log_filepath: 日志文件的路径, 默认将日志输出到终端.
+  w2g-cli one [--host] [--port] [--origins] [--log_filepath] mp4_filepath
+    自动转换视频格式并启动流媒体和WebSocket服务.
+    可选参数:
+      --host: 使用的主机地址, 默认为127.0.0.1.
+      --port: 绑定的端口号, 默认为8000.
+      --origins: CORS(跨域资源共享)允许的源列表, 默认为空.
+      --log_filepath: 日志文件的路径, 默认将日志输出到终端.
   w2g-cli version
     查看命令行工具版本.
 """
@@ -67,7 +77,7 @@ def launch_command(host: str,
                    port: str,
                    origins: List[str],
                    log_filepath: Optional[str],
-                   videos_directory: str):
+                   videos_directory: Union[str, os.PathLike]):
     """服务启动命令, 用于启动流媒体和WebSocket服务.
 
     Example:
@@ -84,7 +94,7 @@ def launch_command(host: str,
             CORS(跨域资源共享)允许的源列表.
         log_filepath: str,
             日志文件的路径.
-        videos_directory: str,
+        videos_directory: str or os.PathLike,
             全部流媒体视频的文件夹.
     """
     # 设置CORS(跨域资源共享).
@@ -107,6 +117,36 @@ def launch_command(host: str,
     logger.info(f'WebSocket服务: 成功启动在 ws://{host}:{port}/ws/')
 
     run(app, host=host, port=int(port), log_level='error')
+
+
+def one_command(host: str,
+                port: str,
+                origins: List[str],
+                log_filepath: Optional[str],
+                mp4_filepath: str):
+    """自动转换视频格式并启动流媒体和WebSocket服务.
+
+    Example:
+        ```shell
+        w2g-cli one ./flower.mp4
+        ```
+
+    Args:
+        host: str,
+            使用的主机地址.
+        port: str,
+            绑定的端口号.
+        origins: list of str,
+            CORS(跨域资源共享)允许的源列表.
+        log_filepath: str,
+            日志文件的路径.
+        mp4_filepath: str,
+            mp4文件的路径.
+    """
+    videos_directory = convert_mp4_to_m3u8(mp4_filepath,
+                                           Path(mp4_filepath).stem)
+    # 调用服务启动命令, 实现代码复用.
+    launch_command(host, port, origins, log_filepath, videos_directory)
 
 
 def version_command():

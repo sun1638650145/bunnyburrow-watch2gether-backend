@@ -7,6 +7,7 @@ from watch2gether.experimental_command_wrapper import (
     convert_command,
     help_command,
     launch_command,
+    one_command,
     version_command
 )
 
@@ -59,7 +60,7 @@ def parse_args(args: List[str]) -> argparse.Namespace:
     Return:
         (解析后)参数组成的容器.
     """
-    parser = LocalizedArgumentParser(usage='w2g-cli {convert, help, launch, version}',  # noqa: E501
+    parser = LocalizedArgumentParser(usage='w2g-cli {convert, help, launch, one, version}',  # noqa: E501
                                      add_help=False,
                                      exit_on_error=False)
     subparsers = parser.add_subparsers(dest='command')
@@ -102,6 +103,25 @@ def parse_args(args: List[str]) -> argparse.Namespace:
                                    help='日志文件的路径, 默认将日志输出到终端.')
         launch_parser.add_argument('videos_directory', help='全部流媒体视频的文件夹.')
 
+        # one命令.
+        one_parser = subparsers.add_parser('one',
+                                           usage='w2g-cli one [--host] [--port] [--origins] [--log_filepath] mp4_filepath',  # noqa: E501
+                                           description='自动转换视频格式并启动流媒体和WebSocket服务.')  # noqa: E501
+        one_parser.add_argument('--host',
+                                default='127.0.0.1',
+                                help='使用的主机地址, 默认为127.0.0.1.')
+        one_parser.add_argument('--port',
+                                default=8000,
+                                help='绑定的端口号, 默认为8000.')
+        one_parser.add_argument('--origins',
+                                nargs='+',
+                                default=[],
+                                help='CORS(跨域资源共享)允许的源列表, 默认为空.')
+        one_parser.add_argument('--log_filepath',
+                                default=None,
+                                help='日志文件的路径, 默认将日志输出到终端.')
+        one_parser.add_argument('mp4_filepath', help='mp4文件的路径.')
+
         # 查看版本命令.
         subparsers.add_parser('version',
                               usage='w2g-cli version',
@@ -126,6 +146,12 @@ def run():
                            args.origins,
                            args.log_filepath,
                            args.videos_directory)
+        elif args.command == 'one':
+            one_command(args.host,
+                        args.port,
+                        args.origins,
+                        args.log_filepath,
+                        args.mp4_filepath)
         elif args.command == 'version':
             version_command()
     except argparse.ArgumentError:
