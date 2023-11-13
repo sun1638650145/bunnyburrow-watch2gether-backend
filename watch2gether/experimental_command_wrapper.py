@@ -143,10 +143,19 @@ def one_command(host: str,
         mp4_filepath: str,
             mp4文件的路径.
     """
+    # 设置将日志保存到文件.
+    if log_filepath:
+        logger.add_file_handler(log_filepath)
+        logger.removeHandler(logger.stream_handler)
+
     videos_directory = convert_mp4_to_m3u8(mp4_filepath,
                                            Path(mp4_filepath).stem)
     # 调用服务启动命令, 实现代码复用.
-    launch_command(host, port, origins, log_filepath, videos_directory)
+    launch_command(host,
+                   port,
+                   origins,
+                   None,  # 避免再创建一个相同的logger.
+                   videos_directory)
 
 
 def version_command():
