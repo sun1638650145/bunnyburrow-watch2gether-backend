@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 from typing import Literal, Union
 
-from watch2gether import experimental_logger as logger
+from watch2gether import logger
 
 
 HLSPlaylistType = Literal['event', 'vod']

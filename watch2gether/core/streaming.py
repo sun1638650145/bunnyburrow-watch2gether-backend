@@ -7,7 +7,7 @@ from fastapi import HTTPException
 from fastapi import Request
 from fastapi.responses import FileResponse, RedirectResponse
 
-from watch2gether import experimental_logger as logger
+from watch2gether import logger
 
 
 router = APIRouter()

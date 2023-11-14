@@ -11,7 +11,7 @@ import watch2gether as w2g
 #  这样可以重复利用资源, 进而降低测试时间.
 w2g.streaming.videos_directory = Path('./tests/assets/')
 # 添加文件处理器, 增加对logger的测试覆盖.
-w2g.experimental_logger.add_file_handler('./watch2gether.log')
+w2g.logger.add_file_handler('./watch2gether.log')
 
 
 class TestStreaming(object):

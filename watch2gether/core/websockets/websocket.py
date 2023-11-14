@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from fastapi import WebSocket, WebSocketDisconnect
 
-from watch2gether import experimental_logger as logger
+from watch2gether import logger
 from watch2gether.core.websockets import ConnectionManager
 
 

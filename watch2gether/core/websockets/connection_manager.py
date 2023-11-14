@@ -4,7 +4,7 @@ from typing import Dict, Optional
 
 from fastapi import WebSocket
 
-from watch2gether import experimental_logger as logger
+from watch2gether import logger
 
 
 class ConnectionManager(object):
