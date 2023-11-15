@@ -26,9 +26,9 @@ setup(
         ]
     },
     install_requires=[
-        'fastapi>=0.89.1, <=0.103.1',
-        'uvicorn>=0.22.0, <=0.23.2',
-        'websockets>=10.4, <=11.0.3',
+        'fastapi>=0.100.0, <=0.104.1',
+        'uvicorn>=0.22.0, <=0.24.0',
+        'websockets>=11.0, <=12.0',
     ],
     python_requires='>=3.9',
 )

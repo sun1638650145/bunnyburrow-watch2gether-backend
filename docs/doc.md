@@ -10,7 +10,7 @@
 
 ```shell
 # 安装插件.
-pip install https://github.com/sun1638650145/bunnyburrow-watch2gether-backend/releases/download/v0.1b1/watch2gether-0.1b1-py3-none-any.whl
+pip install https://github.com/sun1638650145/bunnyburrow-watch2gether-backend/releases/download/v0.1b2/watch2gether-0.1b2-py3-none-any.whl
 # 强烈推荐安装到虚拟环境, 并添加环境变量到shell.
 echo alias w2g-cli=/path/to/bin/w2g-cli >> .zshrc
 ```
@@ -30,25 +30,26 @@ w2g-cli convert ./我们亲爱的Steve.mp4 ./我们亲爱的Steve/
 w2g-cli launch --host 0.0.0.0 ./
 ```
 
-同时, 如果你第一次启动可以考虑更简化的`one`命令, `one`命令将在当前目录下自动处理并生成`m3u8`格式视频.
+同时, 如果你第一次启动可以考虑更简化的`one`命令, `one`命令只需要提供一个`mp4`视频即可自动启动服务.
 
 ```shell
-# 自动处理mp4视频并监听所有主机地址, 启动流媒体服务和WebSocket服务.
-w2g-cli one --host 0.0.0.0 ./我们亲爱的Steve.mp4
+# 监听所有主机地址并绑定在80端口, 自动转换视频格式并启动流媒体和WebSocket服务.
+w2g-cli one --host 0.0.0.0 --port 80 ./我们亲爱的Steve.mp4
 ```
+
+更多详细信息请使用`help`命令获取.
 
 ### 2. 在Python 🐍 脚本中使用
 
-一起看电影(backend)的后端目前提供了3个服务, 包括将视频从`mp4`格式转换成`m3u8`, 创建流媒体服务以及`WebSocket`服务器. 一起看电影采用前后端分离的设计模式, 这使得前端可以灵活接入多种类型的客户端. 下面的`python`脚本提供了一个标准的开发模版.
+一起看电影(backend)的后端目前提供了3个服务, 包括将视频从`mp4`格式转换成`m3u8`格式, 创建流媒体服务以及`WebSocket`服务. 一起看电影采用前后端分离的设计模式, 这使得后端可以灵活接入多种类型的客户端. 下面的`python`脚本提供了一个标准的开发模版.
 
 ```python
 import watch2gether as w2g
 import uvicorn
 
-# 将mp4视频转换为流媒体视频.
-videos_directory = w2g.convert_mp4_to_m3u8('./我们亲爱的Steve.mp4', './我们亲爱的Steve/')
-# 设置流媒体视频文件夹的路径.
-w2g.streaming.videos_directory = videos_directory
+# 将视频从mp4格式转换成m3u8格式, 并设置全部流媒体视频的文件夹.
+w2g.streaming.videos_directory = w2g.convert_mp4_to_m3u8('./我们亲爱的Steve.mp4',
+                                                         './我们亲爱的Steve/')
 # 启动流媒体服务和WebSocket服务.
 uvicorn.run(app=w2g.app,
             host='0.0.0.0',
