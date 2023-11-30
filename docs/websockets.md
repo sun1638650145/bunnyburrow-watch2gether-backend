@@ -17,7 +17,7 @@
         "type": "websocket.unicast",
         # 接收单播的客户端ID: 仅工作类型为"websocket.unicast"时参数有效.
     	"receivedClientID": "2023"
-	},
+    },
     # 真实数据: 可进行加密, 内部数据格式由客户端维护.
     "data": {
         "text": "Hello, World!"
