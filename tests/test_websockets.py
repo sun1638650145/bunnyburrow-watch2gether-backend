@@ -25,39 +25,55 @@ class TestWebSockets(object):
 
     async def test_broadcast(self):
         """测试广播数据."""
-        client_a = TestClient(w2g.app)
-        client_b = TestClient(w2g.app)
+        client_a, client_b = TestClient(w2g.app), TestClient(w2g.app)
+        s_data_a = {'msg': 'Hi!'}
+        s_data_b = {'text': 'Hello, World!'}
 
         with (client_a.websocket_connect('/ws/1001/') as websocket_a,
               client_b.websocket_connect('/ws/1002/') as websocket_b):
-            # 模拟来自客户端a的广播, 且对自身广播.
-            await manager.broadcast({'msg': 'Hi!'})
-            # 模拟来自客户端a的广播, 不对自身广播.
-            await manager.broadcast({'msg': 'Hello, World!'}, 1001)
+            # 模拟由客户端a(实际上由服务器)发起广播, 且对自身广播.
+            await manager.broadcast(s_data_a)
+            # 由客户端a发起广播.
+            websocket_a.send_json({
+                'props': {'type': 'websocket.broadcast'},
+                'data': s_data_b
+            })
 
-            data_a = websocket_a.receive_json()
+            r_data_a = websocket_a.receive_json()
             # 客户端b会收到两条数据.
-            data_b1 = websocket_b.receive_json()
-            data_b2 = websocket_b.receive_json()
+            r_data_b1 = websocket_b.receive_json()
+            r_data_b2 = websocket_b.receive_json()
 
             assert len(manager.active_connections) == 2
-            assert data_a == {'msg': 'Hi!'}
-            assert data_b1 == {'msg': 'Hi!'}
-            assert data_b2 == {'msg': 'Hello, World!'}
+            assert r_data_a == s_data_a
+            assert r_data_b1 == s_data_a
+            assert r_data_b2.get('data') == s_data_b
 
     async def test_unicast(self):
         """测试单播数据."""
-        client_a = TestClient(w2g.app)
-        client_b = TestClient(w2g.app)
+        client_a, client_b = TestClient(w2g.app), TestClient(w2g.app)
+        s_data = {'msg': 'Hi!'}
 
-        with (client_a.websocket_connect('/ws/1001/'),
-              client_b.websocket_connect('/ws/1002/') as websocket):
-            # 模拟来自客户端a的单播.
-            await manager.unicast({'msg': 'Hi!'}, 1001, 1002)
-            # 模拟来自客户端a的单播, 发送到不存在的客户端.
-            await manager.unicast({'msg': 'Hi!'}, 1001, 1003)
+        with (client_a.websocket_connect('/ws/1001/') as websocket_a,
+              client_b.websocket_connect('/ws/1002/') as websocket_b):
+            # 客户端a向客户端b发起单播.
+            websocket_a.send_json({
+                'props': {
+                    'type': 'websocket.unicast',
+                    'receivedClientID': 1002
+                },
+                'data': s_data
+            })
+            # 客户端a向不存在的客户端发起单播.
+            websocket_a.send_json({
+                'props': {
+                    'type': 'websocket.unicast',
+                    'receivedClientID': 2023
+                },
+                'data': s_data
+            })
 
-            data = websocket.receive_json()
+            r_data = websocket_b.receive_json()
 
             assert len(manager.active_connections) == 2
-            assert data == {'msg': 'Hi!'}
+            assert r_data.get('data') == s_data
