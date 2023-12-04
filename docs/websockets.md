@@ -16,7 +16,7 @@
         # 工作类型: 表示进行单播, 缺省时则被服务器自动解析为广播.
         'type': 'websocket.unicast',
         # 接收单播的客户端ID: 仅工作类型为"websocket.unicast"时参数有效.
-    	'receivedClientID': '2023'
+    	'receivedClientID': 2023
     },
     # 实际数据: 内部数据格式由客户端维护.
     'data': {
