@@ -24,7 +24,7 @@ class TestStreaming(object):
             ('/videos/flower/flower.m3u', 404)
         ]
     )
-    async def test_streaming(self, url, expected_status_code):
+    def test_streaming(self, url, expected_status_code):
         """测试流媒体服务."""
         client = TestClient(w2g.app)
 

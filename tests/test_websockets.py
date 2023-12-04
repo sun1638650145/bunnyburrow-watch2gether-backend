@@ -11,7 +11,7 @@ manager = w2g.websocket.manager  # 获取WebSocket连接管理器.
 
 
 class TestWebSockets(object):
-    async def test_connection_refused(self):
+    def test_connection_refused(self):
         """测试使用相同客户端ID连接被拒."""
         client = TestClient(w2g.app)
 
@@ -49,7 +49,7 @@ class TestWebSockets(object):
             assert r_data_b1 == s_data_a
             assert r_data_b2.get('data') == s_data_b
 
-    async def test_unicast(self):
+    def test_unicast(self):
         """测试单播数据."""
         client_a, client_b = TestClient(w2g.app), TestClient(w2g.app)
         s_data = {'msg': 'Hi!'}
