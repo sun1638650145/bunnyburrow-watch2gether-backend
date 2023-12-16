@@ -1,3 +1,5 @@
+from json.decoder import JSONDecodeError
+
 from fastapi import APIRouter
 from fastapi import WebSocket, WebSocketDisconnect
 
@@ -31,15 +33,19 @@ async def create_websocket_endpoint(client_id: int, websocket: WebSocket):
 
         try:
             while True:
-                data = await websocket.receive_json()
-                props = data.get('props')
-                received_client_id = props.get('receivedClientID', -1)
+                try:
+                    data = await websocket.receive_json()
+                    props = data.get('props', dict())
+                    received_client_id = props.get('receivedClientID', -1)
 
-                # 对工作类型进行判断.
-                if (props.get('type') == 'websocket.unicast'
-                        and received_client_id > 0):
-                    await manager.unicast(data, client_id, received_client_id)
-                else:
-                    await manager.broadcast(data, client_id)
+                    # 对工作类型进行判断.
+                    if (props.get('type') == 'websocket.unicast'
+                            and received_client_id > 0):
+                        await manager.unicast(data, client_id, received_client_id)  # noqa: E501
+                    else:
+                        await manager.broadcast(data, client_id)
+                except JSONDecodeError:
+                    logger.warning(f'客户端({websocket.client.host}:{websocket.client.port})'  # noqa: E501
+                                   f'发送无法解析的JSON数据!')
         except WebSocketDisconnect:
             manager.disconnect(client_id)
