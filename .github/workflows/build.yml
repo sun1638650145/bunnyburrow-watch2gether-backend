@@ -37,20 +37,9 @@ jobs:
       uses: actions/setup-python@v4.7.1
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Before macOS install
-      run: |
-        brew update
-        brew install ffmpeg
-      if: runner.os == 'macOS'
-    - name: Before Linux install
-      run: |
-        sudo apt update
-        sudo apt install -y ffmpeg
-      if: runner.os == 'Linux'
-    - name: Before Windows install
-      run: |
-        vcpkg install ffmpeg:x64-windows
-      if: runner.os == 'Windows'
+    - name: Install FFmpeg
+      uses: FedericoCarboni/setup-ffmpeg@v2
+      id: setup-ffmpeg
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
