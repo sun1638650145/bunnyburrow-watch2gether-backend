@@ -23,11 +23,13 @@ class TestWebSockets(object):
                 with client.websocket_connect('/ws/2023/'):
                     assert len(manager.active_connections) == 1  # noqa: E501 连接被拒且仍为1个活跃连接.
 
+    @pytest.mark.asyncio
     async def test_broadcast(self):
         """测试广播数据."""
         client_a, client_b = TestClient(w2g.app), TestClient(w2g.app)
         s_data_a = {'msg': 'Hi!'}
         s_data_b = {'text': 'Hello, World!'}
+        s_data_c = 'Not JSON!'
 
         with (client_a.websocket_connect('/ws/1001/') as websocket_a,
               client_b.websocket_connect('/ws/1002/') as websocket_b):
@@ -38,6 +40,8 @@ class TestWebSockets(object):
                 'props': {'type': 'websocket.broadcast'},
                 'data': s_data_b
             })
+            # 客户端a发送无法解析的JSON数据.
+            websocket_a.send_text(s_data_c)
 
             r_data_a = websocket_a.receive_json()
             # 客户端b会收到两条数据.
