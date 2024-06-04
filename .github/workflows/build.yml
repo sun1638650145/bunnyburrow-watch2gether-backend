@@ -16,11 +16,11 @@ jobs:
         os: [macos-13, ubuntu-latest, windows-latest] # macos-13, ubuntu-22.04, windows-2022
         python-version: ['3.9', '3.10', '3.11', '3.12']
         exclude:
-          - os: macos-latest
+          - os: macos-13
             python-version: '3.9'
-          - os: macos-latest
+          - os: macos-13
             python-version: '3.11'
-          - os: macos-latest
+          - os: macos-13
             python-version: '3.12'
           - os: windows-latest
             python-version: '3.9'
