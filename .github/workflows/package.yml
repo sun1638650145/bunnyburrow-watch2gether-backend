@@ -10,14 +10,14 @@ permissions:
 jobs:
   deploy:
 
-    runs-on: ubuntu-latest # ubuntu-22.04
+    runs-on: ubuntu-latest # ubuntu-24.04
 
     steps:
-    - uses: actions/checkout@v4.1.6
+    - uses: actions/checkout@v4.1.7
       with:
         lfs: false # 不下载Git LFS缓存.
     - name: Set up Python
-      uses: actions/setup-python@v5.1.0
+      uses: actions/setup-python@v5.2.0
       with:
         python-version: '3.10'
     - name: Install dependencies
@@ -27,7 +27,7 @@ jobs:
     - name: Build package
       run: python -m build
     - name: Publish package to Releases
-      uses: softprops/action-gh-release@v2.0.5
+      uses: softprops/action-gh-release@v2.0.8
       with:
         files: |
           dist/*.whl
