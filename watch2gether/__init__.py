@@ -1,7 +1,7 @@
 """一起看电影.
 
 Bunnyburrow Software Project(兔窝镇软件计划)
-Copyright 2023-2024 Steve R. Sun. All rights reserved.
+Copyright 2023-2025 Steve R. Sun. All rights reserved.
 """
 __version__ = '0.1b3'
 
