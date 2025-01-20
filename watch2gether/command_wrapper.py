@@ -56,7 +56,7 @@ Copyright 2023-2025 Steve R. Sun. All rights reserved.
   w2g-cli help
     获取帮助信息.
   w2g-cli launch [--host] [--port] [--origins] [--log_filepath]
-          videos_directory
+                 [--ssl_key_filepath] [--ssl_cert_filepath] videos_directory
     启动流媒体和WebSocket服务.
     参数:
       videos_directory: 全部流媒体视频的文件夹.
@@ -65,7 +65,10 @@ Copyright 2023-2025 Steve R. Sun. All rights reserved.
       --port: 绑定的端口号, 默认为8000.
       --origins: CORS(跨域资源共享)允许的源列表, 默认为空.
       --log_filepath: 日志文件的路径, 默认将日志输出到终端.
-  w2g-cli one [--host] [--port] [--origins] [--log_filepath] mp4_filepath
+      --ssl_key_filepath: SSL私钥文件的路径, 默认不启用SSL协议.
+      --ssl_cert_filepath: SSL证书文件的路径, 默认不启用SSL协议.
+  w2g-cli one [--host] [--port] [--origins] [--log_filepath]
+              [--ssl_key_filepath] [--ssl_cert_filepath] mp4_filepath
     自动转换视频格式并启动流媒体和WebSocket服务.
     参数:
       mp4_filepath: mp4文件的路径.
@@ -74,6 +77,8 @@ Copyright 2023-2025 Steve R. Sun. All rights reserved.
       --port: 绑定的端口号, 默认为8000.
       --origins: CORS(跨域资源共享)允许的源列表, 默认为空.
       --log_filepath: 日志文件的路径, 默认将日志输出到终端.
+      --ssl_key_filepath: SSL私钥文件的路径, 默认不启用SSL协议.
+      --ssl_cert_filepath: SSL证书文件的路径, 默认不启用SSL协议.
   w2g-cli version
     查看命令行工具版本.
 """
@@ -84,6 +89,8 @@ def launch_command(host: str,
                    port: str,
                    origins: List[str],
                    log_filepath: Optional[str],
+                   ssl_key_filepath: Optional[str],
+                   ssl_cert_filepath: Optional[str],
                    videos_directory: Union[str, os.PathLike]):
     """服务启动命令, 用于启动流媒体和WebSocket服务.
 
@@ -101,6 +108,10 @@ def launch_command(host: str,
             CORS(跨域资源共享)允许的源列表.
         log_filepath: str,
             日志文件的路径.
+        ssl_key_filepath: str,
+            SSL私钥文件的路径.
+        ssl_cert_filepath: str,
+            SSL证书文件的路径.
         videos_directory: str or os.PathLike,
             全部流媒体视频的文件夹.
     """
@@ -120,16 +131,29 @@ def launch_command(host: str,
     # 设置流媒体视频的资源文件夹.
     streaming.videos_directory = videos_directory
 
-    logger.info(f'流媒体服务: 成功启动在 http://{host}:{port}/video/')
-    logger.info(f'WebSocket服务: 成功启动在 ws://{host}:{port}/ws/')
+    if ssl_key_filepath and ssl_cert_filepath:
+        protocol, ws_protocol = 'https', 'wss'
+    else:
+        protocol, ws_protocol = 'http', 'ws'
+        logger.warning('未启用SSL协议, 服务运行在非加密模式下!')
 
-    run(app, host=host, port=int(port), log_level='error')
+    logger.info(f'流媒体服务: 成功启动在 {protocol}://{host}:{port}/video/')
+    logger.info(f'WebSocket服务: 成功启动在 {ws_protocol}://{host}:{port}/ws/')
+
+    run(app,
+        host=host,
+        port=int(port),
+        log_level='error',
+        ssl_keyfile=ssl_key_filepath,
+        ssl_certfile=ssl_cert_filepath)
 
 
 def one_command(host: str,
                 port: str,
                 origins: List[str],
                 log_filepath: Optional[str],
+                ssl_key_filepath: Optional[str],
+                ssl_cert_filepath: Optional[str],
                 mp4_filepath: str):
     """自动转换视频格式并启动流媒体和WebSocket服务.
 
@@ -147,6 +171,10 @@ def one_command(host: str,
             CORS(跨域资源共享)允许的源列表.
         log_filepath: str,
             日志文件的路径.
+        ssl_key_filepath: str,
+            SSL私钥文件的路径.
+        ssl_cert_filepath: str,
+            SSL证书文件的路径.
         mp4_filepath: str,
             mp4文件的路径.
     """
@@ -162,6 +190,8 @@ def one_command(host: str,
                    port,
                    origins,
                    None,  # 避免再创建一个相同的logger.
+                   ssl_key_filepath,
+                   ssl_cert_filepath,
                    videos_directory)
 
 

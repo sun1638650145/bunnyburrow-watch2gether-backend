@@ -86,7 +86,7 @@ def parse_args(args: List[str]) -> argparse.Namespace:
 
         # 服务启动命令.
         launch_parser = subparsers.add_parser('launch',
-                                              usage='w2g-cli launch [--host] [--port] [--origins] [--log_filepath] videos_directory',  # noqa: E501
+                                              usage='w2g-cli launch [--host] [--port] [--origins] [--log_filepath] [--ssl_key_filepath] [--ssl_cert_filepath] videos_directory',  # noqa: E501
                                               description='启动流媒体和WebSocket服务.')
         launch_parser.add_argument('--host',
                                    default='127.0.0.1',
@@ -101,11 +101,17 @@ def parse_args(args: List[str]) -> argparse.Namespace:
         launch_parser.add_argument('--log_filepath',
                                    default=None,
                                    help='日志文件的路径, 默认将日志输出到终端.')
+        launch_parser.add_argument('--ssl_key_filepath',
+                                   default=None,
+                                   help='SSL私钥文件的路径, 默认不启用SSL协议.')
+        launch_parser.add_argument('--ssl_cert_filepath',
+                                   default=None,
+                                   help='SSL证书文件的路径, 默认不启用SSL协议.')
         launch_parser.add_argument('videos_directory', help='全部流媒体视频的文件夹.')
 
         # one命令.
         one_parser = subparsers.add_parser('one',
-                                           usage='w2g-cli one [--host] [--port] [--origins] [--log_filepath] mp4_filepath',  # noqa: E501
+                                           usage='w2g-cli one [--host] [--port] [--origins] [--log_filepath] [--ssl_key_filepath] [--ssl_cert_filepath] mp4_filepath',  # noqa: E501
                                            description='自动转换视频格式并启动流媒体和WebSocket服务.')  # noqa: E501
         one_parser.add_argument('--host',
                                 default='127.0.0.1',
@@ -120,6 +126,12 @@ def parse_args(args: List[str]) -> argparse.Namespace:
         one_parser.add_argument('--log_filepath',
                                 default=None,
                                 help='日志文件的路径, 默认将日志输出到终端.')
+        one_parser.add_argument('--ssl_key_filepath',
+                                default=None,
+                                help='SSL私钥文件的路径, 默认不启用SSL协议.')
+        one_parser.add_argument('--ssl_cert_filepath',
+                                default=None,
+                                help='SSL证书文件的路径, 默认不启用SSL协议.')
         one_parser.add_argument('mp4_filepath', help='mp4文件的路径.')
 
         # 查看版本命令.
@@ -145,12 +157,16 @@ def run():
                            args.port,
                            args.origins,
                            args.log_filepath,
+                           args.ssl_key_filepath,
+                           args.ssl_cert_filepath,
                            args.videos_directory)
         elif args.command == 'one':
             one_command(args.host,
                         args.port,
                         args.origins,
                         args.log_filepath,
+                        args.ssl_key_filepath,
+                        args.ssl_cert_filepath,
                         args.mp4_filepath)
         elif args.command == 'version':
             version_command()
