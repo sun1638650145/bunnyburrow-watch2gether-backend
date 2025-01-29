@@ -2,7 +2,14 @@
 
 [![build](https://github.com/sun1638650145/bunnyburrow-watch2gether-backend/actions/workflows/build.yml/badge.svg)](https://github.com/sun1638650145/bunnyburrow-watch2gether-backend/actions/workflows/build.yml) [![package](https://github.com/sun1638650145/bunnyburrow-watch2gether-backend/actions/workflows/package.yml/badge.svg)](https://github.com/sun1638650145/bunnyburrow-watch2gether-backend/actions/workflows/package.yml) [![codecov](https://codecov.io/gh/sun1638650145/bunnyburrow-watch2gether-backend/branch/master/graph/badge.svg?token=2OCJQLENZ5)](https://codecov.io/gh/sun1638650145/bunnyburrow-watch2gether-backend)
 
-一起看电影是[Bunnyburrow Software Project(兔窝镇软件计划)](https://github.com/sun1638650145/bunnyburrow)的第3个组件, 你可以使用它创建流媒体服务并和朋友们一起看. 
+<b>一起看电影</b>是[Bunnyburrow Software Project(兔窝镇软件计划)](https://github.com/sun1638650145/bunnyburrow)的第3个项目, 旨在帮助你搭建流媒体服务, 与朋友们共享观影时光. 🍿🎥
+
+<b>一起看电影(backend)</b>作为服务器端子项目,  为系统提供核心支持. 你可以自由选择适合自己的客户端, 当前支持一下两种:
+
+* [Web客户端](https://github.com/sun1638650145/bunnyburrow-watch2gether-web)
+* [iOS客户端](https://github.com/sun1638650145/bunnyburrow-watch2gether-app)
+
+此外, 你可以根据[WebSockets协议](https://github.com/sun1638650145/bunnyburrow-watch2gether-backend/blob/master/docs/websockets.md)自行开发客户端, 以满足个性化需求.
 
 ## 安装
 
@@ -11,13 +18,13 @@
 ```shell
 # 安装插件.
 pip install https://github.com/sun1638650145/bunnyburrow-watch2gether-backend/releases/download/v0.1b2/watch2gether-0.1b2-py3-none-any.whl
-# 强烈推荐安装到虚拟环境, 并添加环境变量到shell.
-echo alias w2g-cli=/path/to/bin/w2g-cli >> .zshrc
+# 强烈推荐安装到虚拟环境, 并创建符号链接.
+ln -s /path/to/bin/w2g-cli /usr/local/bin/w2g-cli
 ```
 
 ## 使用方法
 
-一起看电影(backend)目前提供2种灵活的使用方法.
+<b>一起看电影(backend)</b>目前提供2种灵活的使用方法.
 
 ### 1. 使用`w2g-cli`命令行工具 💻
 
@@ -26,6 +33,7 @@ echo alias w2g-cli=/path/to/bin/w2g-cli >> .zshrc
 ```shell
 # 将视频从mp4格式转换成m3u8格式.
 w2g-cli convert ./我们亲爱的Steve.mp4 ./我们亲爱的Steve/
+
 # 监听所有主机地址, 启动流媒体和WebSocket服务.
 w2g-cli launch --host 0.0.0.0 ./
 ```
