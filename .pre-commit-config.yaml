@@ -1,7 +1,7 @@
 # git hooks: 配置代码静态检查.
 # sh: pip install pre-commit; pre-commit install
 repos:
-  - repo: https://github.com/pycqa/flake8
-    rev: 7.1.1
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.12.7
     hooks:
-      - id: flake8
+      - id: ruff-check

@@ -30,3 +30,9 @@ Homepage = "https://github.com/sun1638650145/bunnyburrow/"
 
 [project.scripts]
 w2g-cli = "watch2gether.cli:run"
+
+[tool.ruff.lint.per-file-ignores]
+# 禁用`*/__init__.py`的imported but unused.
+"*/__init__.py" = ["F401"]
+# 禁用`watch2gether/__init__.py`的Module level import not at top of file.
+"watch2gether/__init__.py" = ["E402"]
