@@ -1,0 +1,32 @@
+[build-system]
+requires = ["hatchling >= 1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "watch2gether"
+version = "0.1b3"
+dependencies = [
+    "fastapi>=0.115.7, <=0.116.1",
+    "uvicorn>=0.34.1, <=0.35.0",
+    "websockets>=14.2, <=15.0.1"
+]
+authors = [
+    { name="Steve R. Sun", email="s1638650145@gmail.com" }
+]
+description = "一起看电影"
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Topic :: Utilities"
+]
+license = "GPL-2.0"
+license-files = ["LICENSE"]
+
+[project.urls]
+Homepage = "https://github.com/sun1638650145/bunnyburrow/"
+
+[project.scripts]
+w2g-cli = "watch2gether.cli:run"
