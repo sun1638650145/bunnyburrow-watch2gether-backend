@@ -9,6 +9,4 @@ __pycache__/
 htmlcov/
 .coverage
 # 忽略打包.
-build/
 dist/
-*.egg-info/
