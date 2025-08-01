@@ -13,11 +13,11 @@
 
 ## 安装
 
-仅需要`Python`环境, 在发布页下载最新的稳定版`whl`文件即可.
+仅需要`Python`环境, 在[发布页](https://github.com/sun1638650145/bunnyburrow-watch2gether-backend/releases)下载最新的稳定版`whl`文件即可.
 
 ```shell
 # 安装插件.
-pip install https://github.com/sun1638650145/bunnyburrow-watch2gether-backend/releases/download/v0.1b2/watch2gether-0.1b2-py3-none-any.whl
+pip install watch2gether-0.1b2-py3-none-any.whl
 # 强烈推荐安装到虚拟环境, 并创建符号链接.
 ln -s /path/to/bin/w2g-cli /usr/local/bin/w2g-cli
 ```
