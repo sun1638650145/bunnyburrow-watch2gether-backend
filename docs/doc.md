@@ -157,3 +157,53 @@ HTTP重定向到`/videos/{video_name}/{video_name}.m3u8`.
 - `client_id`: 整数, `WebSocket`客户端ID.
 
 - `websocket`: `WebSocket`, `WebSocket`实例.
+
+## 部署建议 ⚙️
+
+尽管本项目可以通过`w2g-cli`命令行工具启动服务, 但在生产环境中, 我们<b>强烈建议</b>使用`nginx`作为反向代理服务器来部署应用.
+
+### nginx配置示例
+
+```nginx
+worker_processes auto; # 根据CPU核心数量定义工作进程的数量.
+
+events {
+    worker_connections 1024; # 单个工作进程的最大未完成异步I/O操作数.
+}
+
+http {
+    # 配置HTTP服务器监听80端口.
+    server {
+        listen 80;
+        server_name localhost;
+        
+        location / {
+            return 301 https://$host$request_uri; # 将HTTP请求重定向到对应的HTTPS地址(记得包含主机头字段和请求参数的原始URI).
+        }
+    }
+    
+    # 配置HTTPS服务器监听443端口.
+    server {
+        listen 443 ssl; # 启用SSL/TLS加密.
+        server_name localhost;
+        
+        ssl_certificate /path/to/your.pem;     # SSL证书文件的路径.
+        ssl_certificate_key /path/to/your.key; # SSL私钥文件的路径.
+        
+        location / {
+            proxy_pass http://127.0.0.1:8000/;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; # 记录请求经过的代理服务器链路信息以及获取真实客户端IP.
+        }
+        
+        # WebSocket代理.
+        location /ws/ {
+            proxy_pass http://127.0.0.1:8000/ws/;   # 使用http而不使用ws.
+            proxy_http_version 1.1;                 # 将连接从HTTP/1.1转换为WebSocket.
+            proxy_set_header Connection "upgrade";  # 设置hop-by-hop字段Connection为"upgrade", 告知后端服务器升级协议.
+            proxy_set_header Upgrade $http_upgrade; # 将hop-by-hop字段Upgrate传递给后端服务器.
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        }
+    }
+}
+```
+
