@@ -7,6 +7,7 @@ name = "watch2gether"
 version = "0.1b3"
 dependencies = [
     "fastapi>=0.115.7, <=0.116.1",
+    "m3u8==6.0.0",
     "uvicorn>=0.34.1, <=0.35.0",
     "websockets>=14.2, <=15.0.1"
 ]
