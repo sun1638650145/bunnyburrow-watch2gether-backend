@@ -39,7 +39,8 @@ async def create_vod_streaming_endpoint(request: Request,
         request: Request,
             当前的`Request`请求.
         video_directory: str,
-            流媒体视频m3u8索引文件和ts文件所处的文件夹(路径参数), 一般和视频同名.
+            流媒体视频m3u8索引文件和ts文件所处的文件夹(路径参数),
+            一般和视频同名.
         file_name: str,
             请求的文件名(路径参数), 一般只需要请求`视频名.m3u8`即可.
 

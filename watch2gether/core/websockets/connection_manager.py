@@ -64,7 +64,7 @@ class ConnectionManager(object):
         # 并发运行, 广播数据.
         await asyncio.gather(*await_tasks)
 
-        websocket = self.active_connections.get(client_id)  # 获取广播数据的客户端.
+        websocket = self.active_connections.get(client_id)  # noqa: E501 获取广播数据的客户端.
         if websocket:
             logger.info(f'客户端({websocket.client.host}:{websocket.client.port})广播数据.')  # noqa: E501
         else:

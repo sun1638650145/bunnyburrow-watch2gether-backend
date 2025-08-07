@@ -37,12 +37,15 @@ def convert_mp4_to_m3u8(mp4_filepath: Union[str, os.PathLike],
         m3u8_directory: str or os.PathLike,
             m3u8文件夹的路径, 封装参数`ffmpeg output.m3u8`.
         video_encoder: str, default='libx264',
-            视频编码器, 封装参数`ffmpeg -c:v libx264`, 支持的编码器请使用`ffmpeg -codecs`查看.
+            视频编码器, 封装参数`ffmpeg -c:v libx264`,
+            支持的编码器请使用`ffmpeg -codecs`查看.
         audio_encoder: str, default='aac',
-            音频编码器, 封装参数`ffmpeg -c:a aac`, 支持的编码器请使用`ffmpeg -codecs`查看.
+            音频编码器, 封装参数`ffmpeg -c:a aac`,
+            支持的编码器请使用`ffmpeg -codecs`查看.
         crf: int, default=23,
-            m3u8文件的视频压缩质量(Constant Rate Factor), 封装参数`ffmpeg -crf 23`,
-             取值范围[0, 51], 推荐选择范围[17, 28], 注意crf值越小, 视频质量越高, 转换时间越长.
+            m3u8文件的视频压缩质量(Constant Rate Factor),
+            封装参数`ffmpeg -crf 23`, 取值范围[0, 51], 推荐选择范围[17, 28],
+            注意crf值越小, 视频质量越高, 转换时间越长.
         preset: Preset, default='veryfast',
             编码速度与压缩比, 封装参数`ffmpeg -preset veryfast`.
         bitrate: int, default=128,
@@ -52,16 +55,20 @@ def convert_mp4_to_m3u8(mp4_filepath: Union[str, os.PathLike],
         log_level: LogLevel, default='error',
             设置使用的日志记录级别, 封装参数`ffmpeg -loglevel error`.
         m3u8_format: str, default='hls',
-            输出文件的封装格式, 封装参数`ffmpeg -f hls`, 支持的封装格式请使用`ffmpeg -formats`查看.
+            输出文件的封装格式, 封装参数`ffmpeg -f hls`,
+            支持的封装格式请使用`ffmpeg -formats`查看.
         hls_time: int, default=2,
-            HLS视频流片段的时长, 封装参数`ffmpeg -f hls -hls_time 2`, 仅在输出文件的封装格式为HLS时有效.
+            HLS视频流片段的时长, 封装参数`ffmpeg -f hls -hls_time 2`,
+            仅在输出文件的封装格式为HLS时有效.
         hls_playlist_type: HLSPlaylistType, default='vod',
-            HLS视频播放列表的类型, 封装参数`ffmpeg -f hls -hls_playlist_type vod`,
-             仅在输出文件的封装格式为HLS时有效.
+            HLS视频播放列表的类型,
+            封装参数`ffmpeg -f hls -hls_playlist_type vod`,
+            仅在输出文件的封装格式为HLS时有效.
         hls_segment_filename: str, default='stream',
             HLS视频流片段的文件名, 默认格式是'm3u8_directory/stream_%d.ts',
-             封装参数`ffmpeg -f hls -hls_segment_filename 'm3u8_directory/stream_%d.ts'`,  # noqa: E501
-             仅在输出文件的封装格式为HLS时有效.
+            封装参数`ffmpeg -f hls `
+            `-hls_segment_filename 'm3u8_directory/stream_%d.ts'`,
+            仅在输出文件的封装格式为HLS时有效.
 
     Return:
         m3u8文件夹的父文件夹的绝对路径.

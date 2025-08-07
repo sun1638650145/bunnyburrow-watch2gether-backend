@@ -97,17 +97,18 @@ def parse_args(args: List[str]) -> argparse.Namespace:
         launch_parser.add_argument('--origins',
                                    nargs='+',
                                    default=[],
-                                   help='CORS(跨域资源共享)允许的源列表, 默认为空.')
+                                   help='CORS(跨域资源共享)允许的源列表, 默认为空.')  # noqa: E501
         launch_parser.add_argument('--log_filepath',
                                    default=None,
-                                   help='日志文件的路径, 默认将日志输出到终端.')
+                                   help='日志文件的路径, 默认将日志输出到终端.')  # noqa: E501
         launch_parser.add_argument('--ssl_key_filepath',
                                    default=None,
-                                   help='SSL私钥文件的路径, 默认不启用SSL协议.')
+                                   help='SSL私钥文件的路径, 默认不启用SSL协议.')  # noqa: E501
         launch_parser.add_argument('--ssl_cert_filepath',
                                    default=None,
-                                   help='SSL证书文件的路径, 默认不启用SSL协议.')
-        launch_parser.add_argument('videos_directory', help='全部流媒体视频的文件夹.')
+                                   help='SSL证书文件的路径, 默认不启用SSL协议.')  # noqa: E501
+        launch_parser.add_argument('videos_directory',
+                                   help='全部流媒体视频的文件夹.')
 
         # one命令.
         one_parser = subparsers.add_parser('one',
@@ -122,7 +123,7 @@ def parse_args(args: List[str]) -> argparse.Namespace:
         one_parser.add_argument('--origins',
                                 nargs='+',
                                 default=[],
-                                help='CORS(跨域资源共享)允许的源列表, 默认为空.')
+                                help='CORS(跨域资源共享)允许的源列表, 默认为空.')  # noqa: E501
         one_parser.add_argument('--log_filepath',
                                 default=None,
                                 help='日志文件的路径, 默认将日志输出到终端.')
