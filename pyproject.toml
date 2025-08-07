@@ -33,7 +33,7 @@ Homepage = "https://github.com/sun1638650145/bunnyburrow/"
 w2g-cli = "watch2gether.cli:run"
 
 [tool.ruff]
-# 设置每个缩进层级使用4个空格数.
+# 设置每个缩进层级使用4个空格.
 indent-width = 4
 # 设置每行代码最大行长度不超过79个字符.
 line-length = 79
