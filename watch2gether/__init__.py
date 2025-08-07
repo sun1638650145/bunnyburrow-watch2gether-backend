@@ -12,6 +12,7 @@ from watch2gether.logger import Logger
 logger = Logger('watch2gether')
 
 from watch2gether.core import convert_mp4_to_m3u8
+from watch2gether.core import download_m3u8
 from watch2gether.core import streaming
 from watch2gether.core import websocket
 
