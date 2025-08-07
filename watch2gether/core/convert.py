@@ -66,7 +66,7 @@ def convert_mp4_to_m3u8(mp4_filepath: Union[str, os.PathLike],
             仅在输出文件的封装格式为HLS时有效.
         hls_segment_filename: str, default='stream',
             HLS视频流片段的文件名, 默认格式是'm3u8_directory/stream_%d.ts',
-            封装参数`ffmpeg -f hls `
+            封装参数`ffmpeg -f hls `\
             `-hls_segment_filename 'm3u8_directory/stream_%d.ts'`,
             仅在输出文件的封装格式为HLS时有效.
 
