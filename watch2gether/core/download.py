@@ -34,7 +34,7 @@ def download_m3u8(url: str, m3u8_directory: Union[str, os.PathLike]) -> Path:
         playlist = m3u8.load(uri=url)
 
         # 保存m3u8播放列表文件.
-        playlist.dump(filename=os.path.join(m3u8_directory, unquote(Path(url).name) + '.m3u8'))  # noqa: E501
+        playlist.dump(filename=os.path.join(m3u8_directory, unquote(Path(url).stem) + '.m3u8'))  # noqa: E501
 
         for segment in playlist.segments:
             segment_url = playlist.base_uri + segment.uri
