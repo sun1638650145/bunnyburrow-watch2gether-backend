@@ -12,7 +12,7 @@ import m3u8
 from watch2gether import logger
 
 
-def download_m3u8(url: str, m3u8_directory: Union[str, os.PathLike]):
+def download_m3u8(url: str, m3u8_directory: Union[str, os.PathLike]) -> Path:
     """解析并下载指定URL的m3u8流媒体视频文件到本地.
 
     Args:
@@ -20,6 +20,9 @@ def download_m3u8(url: str, m3u8_directory: Union[str, os.PathLike]):
             m3u8流媒体视频的URL.
         m3u8_directory: str or os.PathLike,
             m3u8文件夹的保存路径.
+
+    Returns:
+        m3u8文件夹的绝对路径.
     """
     # 将URL转换成百分号编码.
     url = quote(url, safe='/:')
@@ -43,3 +46,5 @@ def download_m3u8(url: str, m3u8_directory: Union[str, os.PathLike]):
     except URLError:
         logger.error('请检查你的网络连接!')
         sys.exit(1)
+
+    return Path(m3u8_directory).absolute()
