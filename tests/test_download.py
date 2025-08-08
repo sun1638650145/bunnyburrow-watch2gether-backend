@@ -11,7 +11,8 @@ class TestDownload(object):
         """测试视频下载成功."""
         videos_directory = w2g.download_m3u8(
             url='https://naver.github.io/egjs-view360/pano/equirect/m3u8/equi.m3u8',
-            m3u8_directory='./tests/assets/video/'
+            m3u8_directory='./tests/assets/video/',
+            info=True
         )
 
         assert videos_directory.absolute() == Path('./tests/assets/video/').absolute()  # noqa: E501
