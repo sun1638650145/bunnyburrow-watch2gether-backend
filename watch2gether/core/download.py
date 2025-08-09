@@ -38,22 +38,22 @@ def download_m3u8(url: str,
         playlist = m3u8.load(uri=url)
 
         # 保存m3u8播放列表文件.
-        playlist.dump(filename=os.path.join(m3u8_directory, unquote(Path(url).stem) + '.m3u8'))  # noqa: E501
+        playlist.dump(filename=os.path.join(m3u8_directory, Path(m3u8_directory).stem + '.m3u8'))  # noqa: E501
 
         total_segments = len(playlist.segments)
         idx_padding_width = len(str(total_segments))  # 显示下载进度占位宽度.
 
-        for idx, segment in enumerate(playlist.segments, start=1):
+        for idx, segment in enumerate(playlist.segments):
             if info:
                 precent = int(idx / total_segments * 100)
 
                 print(f'\r{precent:>3}%|{"█" * (precent // 10) + " " * (10 - precent // 10)}|'  # noqa: E501
-                      f' {idx:>{idx_padding_width}}/{total_segments}'
-                      f' 正在下载分片: {segment.uri}', end='')
+                      f' {idx + 1:>{idx_padding_width}}/{total_segments}'
+                      f' 正在下载分片: stream_{idx}.ts', end='')
 
             segment_url = playlist.base_uri + segment.uri
             # 下载对应的ts分片文件.
-            urlretrieve(url=segment_url, filename=os.path.join(m3u8_directory, segment.uri))  # noqa: E501
+            urlretrieve(url=segment_url, filename=os.path.join(m3u8_directory, f'stream_{idx}.ts'))  # noqa: E501
 
         if info:
             print(f'\r100%|██████████| {total_segments}/{total_segments} 下载完成:)')  # noqa: E501
