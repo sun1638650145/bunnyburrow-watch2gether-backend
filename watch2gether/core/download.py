@@ -37,9 +37,6 @@ def download_m3u8(url: str,
     try:
         playlist = m3u8.load(uri=url)
 
-        # 保存m3u8播放列表文件.
-        playlist.dump(filename=os.path.join(m3u8_directory, Path(m3u8_directory).stem + '.m3u8'))  # noqa: E501
-
         total_segments = len(playlist.segments)
         idx_padding_width = len(str(total_segments))  # 显示下载进度占位宽度.
 
@@ -51,13 +48,20 @@ def download_m3u8(url: str,
                       f' {idx + 1:>{idx_padding_width}}/{total_segments}'
                       f' 正在下载分片: stream_{idx}.ts', end='')
 
-            segment_url = playlist.base_uri + segment.uri
+            # 如果分片文件没有使用绝对路径则拼接为完整的URL.
+            if not segment.uri.startswith('http'):
+                segment.uri = playlist.base_uri + segment.uri
+
             # 下载对应的ts分片文件.
-            urlretrieve(url=segment_url, filename=os.path.join(m3u8_directory, f'stream_{idx}.ts'))  # noqa: E501
+            urlretrieve(url=segment.uri, filename=os.path.join(m3u8_directory, f'stream_{idx}.ts'))  # noqa: E501
+            # 重命名为使用相对路径的分片文件.
+            segment.uri = f'stream_{idx}.ts'
+
+        # 保存m3u8播放列表文件.
+        playlist.dump(filename=os.path.join(m3u8_directory, Path(m3u8_directory).stem + '.m3u8'))  # noqa: E501
 
         if info:
             print(f'\r100%|██████████| {total_segments}/{total_segments} 下载完成:)')  # noqa: E501
-
     except HTTPError:
         logger.error('没有找到流媒体视频文件, 请检查你输入的URL!')
         sys.exit(1)
