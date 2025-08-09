@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 from typing import Union
 from urllib.error import HTTPError, URLError
-from urllib.parse import quote, unquote
+from urllib.parse import quote
 from urllib.request import urlretrieve
 
 import m3u8
