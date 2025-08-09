@@ -39,8 +39,8 @@ indent-width = 4
 line-length = 79
 
 [tool.ruff.lint]
-# 启用E类规则.
-select = ["E"]
+# 启用E, F类规则.
+select = ["E", "F"]
 
 [tool.ruff.lint.per-file-ignores]
 # 禁用`*/__init__.py`的imported but unused.
