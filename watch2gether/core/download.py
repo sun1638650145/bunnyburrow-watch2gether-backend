@@ -29,7 +29,7 @@ def download_m3u8(url: str,
         m3u8文件夹的绝对路径.
     """
     # 将URL转换成百分号编码.
-    url = quote(url, safe='/:')
+    url = quote(url, safe='&/:=?')
 
     # 创建用于保存m3u8的文件夹.
     os.makedirs(Path(m3u8_directory).absolute(), exist_ok=True)
