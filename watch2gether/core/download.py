@@ -9,7 +9,32 @@ from urllib.request import urlretrieve
 
 import m3u8
 
+from m3u8 import M3U8, Segment
+
 from watch2gether import logger
+
+
+def download_for_segment(playlist: M3U8,
+                         segment: Segment,
+                         segment_filename: Union[str, os.PathLike]):
+    """下载一个ts分片文件到本地.
+
+    Args:
+        playlist: M3U8,
+            m3u8播放列表.
+        segment: Segment,
+            要下载的单个ts分片文件.
+        segment_filename: str or os.PathLike,
+            ts分片文件的保存路径.
+    """
+    # 如果ts分片文件没有使用绝对路径则拼接为完整的URL.
+    if not segment.uri.startswith('http'):
+        segment.uri = playlist.base_uri + segment.uri
+
+    # 下载对应的ts分片文件.
+    urlretrieve(url=segment.uri, filename=segment_filename)
+    # 重命名为使用相对路径的分片文件.
+    segment.uri = Path(segment_filename).name
 
 
 def download_m3u8(url: str,
@@ -48,14 +73,7 @@ def download_m3u8(url: str,
                       f' {idx + 1:>{idx_padding_width}}/{total_segments}'
                       f' 正在下载分片: stream_{idx}.ts', end='')
 
-            # 如果分片文件没有使用绝对路径则拼接为完整的URL.
-            if not segment.uri.startswith('http'):
-                segment.uri = playlist.base_uri + segment.uri
-
-            # 下载对应的ts分片文件.
-            urlretrieve(url=segment.uri, filename=os.path.join(m3u8_directory, f'stream_{idx}.ts'))  # noqa: E501
-            # 重命名为使用相对路径的分片文件.
-            segment.uri = f'stream_{idx}.ts'
+            download_for_segment(playlist, segment, os.path.join(m3u8_directory, f'stream_{idx}.ts'))  # noqa: E501
 
         # 保存m3u8播放列表文件.
         playlist.dump(filename=os.path.join(m3u8_directory, Path(m3u8_directory).stem + '.m3u8'))  # noqa: E501
