@@ -18,12 +18,14 @@ from watch2gether import logger
 KeyIVPair = Tuple[bytes, bytes]
 
 
-def download_key_iv(playlist: M3U8) -> Optional[KeyIVPair]:
+def download_key_iv(playlist: M3U8, info: bool = False) -> Optional[KeyIVPair]:
     """下载密钥和初始化向量(IV).
 
     Args:
         playlist: M3U8,
             m3u8播放列表.
+        info: bool, default=False,
+            是否显示下载密钥和初始化向量(IV)的信息.
 
     Returns:
         密钥和初始化向量(IV), 当m3u8播放列表没有密钥信息时则返回None.
@@ -32,7 +34,8 @@ def download_key_iv(playlist: M3U8) -> Optional[KeyIVPair]:
         key = urlopen(key_object.uri).read()
         iv = bytes.fromhex(key_object.iv[2:])  # 去掉十六进制字符串前导`0x`.
 
-        print('密钥和初始化向量(IV)下载成功:)')
+        if info:
+            print('密钥和初始化向量(IV)下载成功:)')
 
         return key, iv
     else:
@@ -111,7 +114,7 @@ def download_m3u8(url: str,
         playlist = m3u8.load(uri=url)
 
         # 尝试下载密钥和初始化向量(IV), 可能返回值为None.
-        key_iv = download_key_iv(playlist)
+        key_iv = download_key_iv(playlist, info)
 
         total_segments = len(playlist.segments)
         idx_padding_width = len(str(total_segments))  # 显示下载进度占位宽度.
