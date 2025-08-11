@@ -32,7 +32,7 @@ def download_key_iv(playlist: M3U8) -> Optional[KeyIVPair]:
         key = urlopen(key_object.uri).read()
         iv = bytes.fromhex(key_object.iv[2:])  # 去掉十六进制字符串前导`0x`.
 
-        logger.info('密钥和初始化向量(IV)下载成功:)')
+        print('密钥和初始化向量(IV)下载成功:)')
 
         return key, iv
     else:
