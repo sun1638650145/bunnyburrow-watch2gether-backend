@@ -2,22 +2,49 @@ import os
 import sys
 
 from pathlib import Path
-from typing import Union
+from typing import Optional, Tuple, Union
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote
-from urllib.request import urlretrieve
+from urllib.request import urlopen, urlretrieve
 
 import m3u8
 
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from m3u8 import M3U8, Segment
 
 from watch2gether import logger
 
 
+KeyIVPair = Tuple[bytes, bytes]
+
+
+def download_key_iv(playlist: M3U8) -> Optional[KeyIVPair]:
+    """下载密钥和初始化向量(IV).
+
+    Args:
+        playlist: M3U8,
+            m3u8播放列表.
+
+    Returns:
+        密钥和初始化向量(IV), 当m3u8播放列表没有密钥信息时则返回None.
+    """
+    if key_object := playlist.keys[0]:
+        key = urlopen(key_object.uri).read()
+        iv = bytes.fromhex(key_object.iv[2:])  # 去掉十六进制字符串前导`0x`.
+
+        logger.info('密钥和初始化向量(IV)下载成功:)')
+
+        return key, iv
+    else:
+        return None
+
+
 def download_for_segment(playlist: M3U8,
                          segment: Segment,
-                         segment_filename: Union[str, os.PathLike]):
-    """下载一个ts分片文件到本地.
+                         segment_filename: Union[str, os.PathLike],
+                         key_iv_pair: Optional[KeyIVPair] = None):
+    """下载一个ts分片文件到本地,
+    提供密钥和初始化向量(IV)时会对文件进行AES-128-CBC解密.
 
     Args:
         playlist: M3U8,
@@ -26,14 +53,32 @@ def download_for_segment(playlist: M3U8,
             要下载的单个ts分片文件.
         segment_filename: str or os.PathLike,
             ts分片文件的保存路径.
+        key_iv_pair: KeyIVPair, default=None,
+            密钥和初始化向量(IV).
     """
     # 如果ts分片文件没有使用绝对路径则拼接为完整的URL.
     if not segment.uri.startswith('http'):
         segment.uri = playlist.base_uri + segment.uri
 
-    # 下载对应的ts分片文件.
-    urlretrieve(url=segment.uri, filename=segment_filename)
-    # 重命名为使用相对路径的分片文件.
+    if key_iv_pair and (key := key_iv_pair[0]) and (iv := key_iv_pair[1]):
+        cipher = Cipher(algorithms.AES(key), modes.CBC(iv))
+        decryptor = cipher.decryptor()
+
+        # 打开对应的ts分片数据到内存中.
+        with urlopen(url=segment.uri) as response:
+            encrypted_data = response.read()
+
+        # 对数据进行解密.
+        decrypted_data = decryptor.update(encrypted_data) + decryptor.finalize()  # noqa: E501
+
+        # 保存ts分片文件.
+        with open(segment_filename, 'wb') as fp:
+            fp.write(decrypted_data)
+    else:
+        # 直接下载对应的ts分片文件.
+        urlretrieve(url=segment.uri, filename=segment_filename)
+
+    # 重命名为使用相对路径的ts分片文件.
     segment.uri = Path(segment_filename).name
 
 
@@ -62,6 +107,9 @@ def download_m3u8(url: str,
     try:
         playlist = m3u8.load(uri=url)
 
+        # 尝试下载密钥和初始化向量(IV), 可能返回值为None.
+        key_iv = download_key_iv(playlist)
+
         total_segments = len(playlist.segments)
         idx_padding_width = len(str(total_segments))  # 显示下载进度占位宽度.
 
@@ -73,7 +121,9 @@ def download_m3u8(url: str,
                       f' {idx + 1:>{idx_padding_width}}/{total_segments}'
                       f' 正在下载分片: stream_{idx}.ts', end='')
 
-            download_for_segment(playlist, segment, os.path.join(m3u8_directory, f'stream_{idx}.ts'))  # noqa: E501
+            download_for_segment(playlist, segment,
+                                 segment_filename=os.path.join(m3u8_directory, f'stream_{idx}.ts'),  # noqa: E501
+                                 key_iv_pair=key_iv)
 
         # 保存m3u8播放列表文件.
         playlist.dump(filename=os.path.join(m3u8_directory, Path(m3u8_directory).stem + '.m3u8'))  # noqa: E501
