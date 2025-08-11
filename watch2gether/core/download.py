@@ -74,6 +74,9 @@ def download_for_segment(playlist: M3U8,
         # 保存ts分片文件.
         with open(segment_filename, 'wb') as fp:
             fp.write(decrypted_data)
+
+        # 解密后删除密钥.
+        segment.key = None
     else:
         # 直接下载对应的ts分片文件.
         urlretrieve(url=segment.uri, filename=segment_filename)
