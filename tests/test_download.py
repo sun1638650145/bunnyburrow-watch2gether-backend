@@ -3,25 +3,37 @@ from pathlib import Path
 
 import pytest
 
+from pytest_httpserver import HTTPServer
+
 import watch2gether as w2g
 
 
 class TestDownload(object):
-    def test_video_download_successful(self):
+    def test_video_download_successful(self, httpserver: HTTPServer):
         """测试视频下载成功."""
+        # 注意: 需要先进行`test_convert.py`的测试生成流媒体资源!
+        # 这样可以重复利用资源, 进而降低测试时间.
+        m3u8_data = Path('./tests/assets/flower/flower.m3u8').read_bytes()
+        ts_data = Path('./tests/assets/flower/stream_0.ts').read_bytes()
+
+        httpserver.expect_request('/videos/flower/flower.m3u8').respond_with_data(m3u8_data)
+        httpserver.expect_request('/videos/flower/stream_0.ts').respond_with_data(ts_data)
+
         videos_directory = w2g.download_m3u8(
-            url='https://naver.github.io/egjs-view360/pano/equirect/m3u8/equi.m3u8',
+            url=httpserver.url_for('/videos/flower/flower.m3u8'),
             m3u8_directory='./tests/assets/video/',
             info=True
         )
 
         assert videos_directory.absolute() == Path('./tests/assets/video/').absolute()  # noqa: E501
 
-    def test_video_not_exists(self):
+    def test_video_not_exists(self, httpserver: HTTPServer):
         """测试视频文件不存在."""
+        httpserver.expect_request('/video/flower/').respond_with_json({'detail': 'Not Found'}, status=404)  # noqa: E501
+
         with pytest.raises(SystemExit) as pytest_exit:
             w2g.download_m3u8(
-                url='https://github.com/video/playlist.m3u8',
+                url=httpserver.url_for('/video/flower/'),
                 m3u8_directory='./tests/assets/video/'
             )
 
