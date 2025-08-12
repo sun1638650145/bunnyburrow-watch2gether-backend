@@ -1,6 +1,7 @@
 import os
 import sys
 
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Optional, Tuple, Union
 from urllib.error import HTTPError, URLError
@@ -90,6 +91,7 @@ def download_for_segment(playlist: M3U8,
 
 def download_m3u8(url: str,
                   m3u8_directory: Union[str, os.PathLike],
+                  max_workers: int = 8,
                   info: bool = False) -> Path:
     """解析并下载指定URL的m3u8流媒体视频文件到本地.
 
@@ -98,6 +100,8 @@ def download_m3u8(url: str,
             m3u8流媒体视频的URL.
         m3u8_directory: str or os.PathLike,
             m3u8文件夹的保存路径.
+        max_workers: int, default=8,
+            下载时使用的线程数.
         info: bool, default=False,
             是否显示详细的下载进度信息.
 
@@ -119,17 +123,29 @@ def download_m3u8(url: str,
         total_segments = len(playlist.segments)
         idx_padding_width = len(str(total_segments))  # 显示下载进度占位宽度.
 
-        for idx, segment in enumerate(playlist.segments):
+        # 使用线程池并行下载分片.
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            futures = []
+
+            for idx, segment in enumerate(playlist.segments):
+                futures.append(
+                    executor.submit(
+                        download_for_segment,
+                        playlist=playlist,
+                        segment=segment,
+                        segment_filename=os.path.join(m3u8_directory, f'stream_{idx}.ts'),  # noqa: E501
+                        key_iv_pair=key_iv
+                    )
+                )
+
             if info:
-                precent = int(idx / total_segments * 100)
+                for idx, future in enumerate(futures):
+                    future.result()
 
-                print(f'\r{precent:>3}%|{"█" * (precent // 10) + " " * (10 - precent // 10)}|'  # noqa: E501
-                      f' {idx + 1:>{idx_padding_width}}/{total_segments}'
-                      f' 正在下载分片: stream_{idx}.ts', end='')
-
-            download_for_segment(playlist, segment,
-                                 segment_filename=os.path.join(m3u8_directory, f'stream_{idx}.ts'),  # noqa: E501
-                                 key_iv_pair=key_iv)
+                    precent = int(idx / total_segments * 100)
+                    print(f'\r{precent:>3}%|{"█" * (precent // 10) + " " * (10 - precent // 10)}|'  # noqa: E501
+                          f' {idx + 1:>{idx_padding_width}}/{total_segments}'
+                          f' 下载分片: stream_{idx}.ts', end='')
 
         # 保存m3u8播放列表文件.
         playlist.dump(filename=os.path.join(m3u8_directory, Path(m3u8_directory).stem + '.m3u8'))  # noqa: E501
