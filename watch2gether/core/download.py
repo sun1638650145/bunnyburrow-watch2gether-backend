@@ -117,6 +117,14 @@ def download_m3u8(url: str,
     try:
         playlist = m3u8.load(uri=url)
 
+        # 检测是否使用了变体流(Variant Stream)技术.
+        if playlist.is_variant:
+            if info:
+                print('检测到变体流(Variant Stream), 将下载最高画质的流媒体视频...')  # noqa: E501
+
+            url = max(playlist.playlists, key=lambda p: p.stream_info.bandwidth).absolute_uri  # noqa: E501
+            playlist = m3u8.load(uri=url)
+
         # 尝试下载密钥和初始化向量(IV), 可能返回值为None.
         key_iv = download_key_iv(playlist, info)
 
