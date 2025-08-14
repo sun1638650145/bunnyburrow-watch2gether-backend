@@ -5,7 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Optional, Tuple, Union
 from urllib.error import HTTPError, URLError
-from urllib.parse import quote
+from urllib.parse import quote, urlparse
 from urllib.request import urlopen, urlretrieve
 
 import m3u8
@@ -46,14 +46,14 @@ def download_key_iv(playlist: M3U8, info: bool = False) -> Optional[KeyIVPair]:
 def download_for_segment(segment: Segment,
                          segment_filename: Union[str, os.PathLike],
                          key_iv_pair: Optional[KeyIVPair] = None):
-    """下载一个ts分片文件到本地,
+    """下载一个分片文件到本地,
     提供密钥和初始化向量(IV)时会对文件进行AES-128-CBC解密.
 
     Args:
         segment: Segment,
-            要下载的单个ts分片文件.
+            要下载的单个分片文件.
         segment_filename: str or os.PathLike,
-            ts分片文件的保存路径.
+            分片文件的保存路径.
         key_iv_pair: KeyIVPair, default=None,
             密钥和初始化向量(IV).
     """
@@ -61,24 +61,24 @@ def download_for_segment(segment: Segment,
         cipher = Cipher(algorithms.AES(key), modes.CBC(iv))
         decryptor = cipher.decryptor()
 
-        # 打开对应的ts分片数据到内存中.
+        # 打开对应的分片数据到内存中.
         with urlopen(url=segment.absolute_uri) as response:
             encrypted_data = response.read()
 
         # 对数据进行解密.
         decrypted_data = decryptor.update(encrypted_data) + decryptor.finalize()  # noqa: E501
 
-        # 保存ts分片文件.
+        # 保存分片文件.
         with open(segment_filename, 'wb') as fp:
             fp.write(decrypted_data)
 
         # 解密后删除密钥.
         segment.key = None
     else:
-        # 直接下载对应的ts分片文件.
+        # 直接下载对应的分片文件.
         urlretrieve(url=segment.absolute_uri, filename=segment_filename)
 
-    # 重命名为使用相对路径的ts分片文件.
+    # 重命名为使用相对路径的分片文件.
     segment.uri = Path(segment_filename).name
 
 
@@ -129,10 +129,13 @@ def download_m3u8(url: str,
             futures = []
 
             for idx, segment in enumerate(playlist.segments):
+                # 获取分片文件的扩展名.
+                suffix = Path(urlparse(url=segment.uri).path).suffix
+
                 futures.append(
                     executor.submit(download_for_segment,
                                     segment=segment,
-                                    segment_filename=os.path.join(m3u8_directory, f'stream_{idx}.ts'),  # noqa: E501
+                                    segment_filename=os.path.join(m3u8_directory, f'stream_{idx}{suffix}'),  # noqa: E501
                                     key_iv_pair=key_iv)
                 )
 
@@ -143,7 +146,7 @@ def download_m3u8(url: str,
                     precent = int(idx / total_segments * 100)
                     print(f'\r{precent:>3}%|{"█" * (precent // 10) + " " * (10 - precent // 10)}|'  # noqa: E501
                           f' {idx + 1:>{idx_padding_width}}/{total_segments}'
-                          f' 下载分片: stream_{idx}.ts', end='')
+                          f' 下载分片: stream_{idx}{suffix}', end='')
 
         # 保存m3u8播放列表文件.
         playlist.dump(filename=os.path.join(m3u8_directory, Path(m3u8_directory).stem + '.m3u8'))  # noqa: E501
