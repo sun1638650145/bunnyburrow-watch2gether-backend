@@ -43,16 +43,13 @@ def download_key_iv(playlist: M3U8, info: bool = False) -> Optional[KeyIVPair]:
         return None
 
 
-def download_for_segment(playlist: M3U8,
-                         segment: Segment,
+def download_for_segment(segment: Segment,
                          segment_filename: Union[str, os.PathLike],
                          key_iv_pair: Optional[KeyIVPair] = None):
     """下载一个ts分片文件到本地,
     提供密钥和初始化向量(IV)时会对文件进行AES-128-CBC解密.
 
     Args:
-        playlist: M3U8,
-            m3u8播放列表.
         segment: Segment,
             要下载的单个ts分片文件.
         segment_filename: str or os.PathLike,
@@ -60,16 +57,12 @@ def download_for_segment(playlist: M3U8,
         key_iv_pair: KeyIVPair, default=None,
             密钥和初始化向量(IV).
     """
-    # 如果ts分片文件没有使用绝对路径则拼接为完整的URL.
-    if not segment.uri.startswith('http'):
-        segment.uri = playlist.base_uri + segment.uri
-
     if key_iv_pair and (key := key_iv_pair[0]) and (iv := key_iv_pair[1]):
         cipher = Cipher(algorithms.AES(key), modes.CBC(iv))
         decryptor = cipher.decryptor()
 
         # 打开对应的ts分片数据到内存中.
-        with urlopen(url=segment.uri) as response:
+        with urlopen(url=segment.absolute_uri) as response:
             encrypted_data = response.read()
 
         # 对数据进行解密.
@@ -83,7 +76,7 @@ def download_for_segment(playlist: M3U8,
         segment.key = None
     else:
         # 直接下载对应的ts分片文件.
-        urlretrieve(url=segment.uri, filename=segment_filename)
+        urlretrieve(url=segment.absolute_uri, filename=segment_filename)
 
     # 重命名为使用相对路径的ts分片文件.
     segment.uri = Path(segment_filename).name
@@ -137,13 +130,10 @@ def download_m3u8(url: str,
 
             for idx, segment in enumerate(playlist.segments):
                 futures.append(
-                    executor.submit(
-                        download_for_segment,
-                        playlist=playlist,
-                        segment=segment,
-                        segment_filename=os.path.join(m3u8_directory, f'stream_{idx}.ts'),  # noqa: E501
-                        key_iv_pair=key_iv
-                    )
+                    executor.submit(download_for_segment,
+                                    segment=segment,
+                                    segment_filename=os.path.join(m3u8_directory, f'stream_{idx}.ts'),  # noqa: E501
+                                    key_iv_pair=key_iv)
                 )
 
             if info:
