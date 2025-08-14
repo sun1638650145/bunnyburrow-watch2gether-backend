@@ -110,6 +110,24 @@ convert_mp4_to_m3u8(mp4_filepath,
 
 `m3u8`文件夹的父文件夹的绝对路径.
 
+#### download_m3u8
+解析并下载指定URL的m3u8流媒体视频文件到本地.
+
+```python
+download_m3u8(url, m3u8_directory, max_workers=8, info=False)
+```
+
+##### 参数
+
+* **url**: 字符串, `m3u8`流媒体视频的URL.
+* **m3u8_directory**: 字符串或路径, `m3u8`文件夹的保存路径.
+* **max_workers**: 整数, 默认为`8`, 下载时使用的线程数.
+* **info**: 布尔类型, 默认为`False`, 是否显示详细的下载进度信息.
+
+##### 返回
+
+`m3u8`文件夹的绝对路径.
+
 #### streaming.videos_directory
 
 全部流媒体视频的文件夹.
