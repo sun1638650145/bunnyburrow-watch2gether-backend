@@ -80,7 +80,7 @@ Copyright 2023-2025 Steve R. Sun. All rights reserved.
       url: m3u8流媒体视频的URL.
       m3u8_directory: m3u8文件夹的保存路径.
     可选参数:
-      -w, --max_workers: 下载时使用的线程数.
+      -w, --max_workers: 下载时使用的线程数, 默认为8.
   w2g-cli help
     获取帮助信息.
   w2g-cli launch [--host] [--port] [--origins] [--log_filepath]
