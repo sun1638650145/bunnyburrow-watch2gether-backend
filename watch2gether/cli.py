@@ -36,7 +36,8 @@ class LocalizedArgumentParser(argparse.ArgumentParser):
 
         message = message.replace('usage', '使用方法')
         message = message.replace('positional arguments', '参数')
-        message = message.replace('options', '可选参数')
+        message = message.replace('optional arguments', '可选参数')  # noqa: E501 仅适用于Python 3.9.
+        message = message.replace('options', '可选参数')  # noqa: E501 适用于Python 3.10及更高版本.
         message = message.replace('show this help message and exit',
                                   '显示帮助信息并退出.')
 
