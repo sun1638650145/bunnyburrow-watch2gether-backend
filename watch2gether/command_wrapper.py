@@ -26,6 +26,7 @@ def convert_command(mp4_filepath: str, m3u8_directory: str):
         ```shell
         w2g-cli convert ./flower.mp4 ./flower/
         ```
+
     Args:
         mp4_filepath: str,
             mp4文件的路径.

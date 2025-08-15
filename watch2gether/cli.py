@@ -36,7 +36,7 @@ class LocalizedArgumentParser(argparse.ArgumentParser):
 
         message = message.replace('usage', '使用方法')
         message = message.replace('positional arguments', '参数')
-        message = message.replace('optional arguments', '可选参数')
+        message = message.replace('options', '可选参数')
         message = message.replace('show this help message and exit',
                                   '显示帮助信息并退出.')
 
@@ -75,7 +75,7 @@ def parse_args(args: List[str]) -> argparse.Namespace:
         # 转换视频格式命令.
         convert_parser = subparsers.add_parser('convert',
                                                usage='w2g-cli convert mp4_filepath m3u8_directory',  # noqa: E501
-                                               description='将视频从mp4格式转换成m3u8格式.')  # noqa: E501
+                                               description='将视频从mp4格式转换成m3u8格式.')
         convert_parser.add_argument('mp4_filepath', help='mp4文件的路径.')
         convert_parser.add_argument('m3u8_directory', help='m3u8文件夹的路径.')
 
