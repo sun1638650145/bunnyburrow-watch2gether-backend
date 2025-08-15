@@ -1,8 +1,9 @@
 import os
+import sys
 
 from logging import Formatter
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import Callable, List, Optional, Union
 
 from fastapi.middleware.cors import CORSMiddleware
 from uvicorn import run
@@ -19,6 +20,25 @@ from watch2gether import streaming
 logger.stream_handler.setFormatter(Formatter(fmt='%(message)s'))
 
 
+def keyboard_interrupt(function: Callable) -> Callable:
+    """键盘中断装饰器, 用于处理键盘中断的异常.
+
+    Args:
+        function: 被调函数.
+
+    Return:
+        被装饰后的函数.
+    """
+    def wrapper(*args, **kwargs):
+        try:
+            return function(*args, **kwargs)
+        except KeyboardInterrupt:
+            sys.exit(130)
+
+    return wrapper
+
+
+@keyboard_interrupt
 def convert_command(mp4_filepath: str, m3u8_directory: str):
     """转换视频格式命令, 若需要复杂功能请使用脚本模式.
 
@@ -36,6 +56,7 @@ def convert_command(mp4_filepath: str, m3u8_directory: str):
     convert_mp4_to_m3u8(mp4_filepath, m3u8_directory)
 
 
+@keyboard_interrupt
 def download_command(url: str, m3u8_directory: str, max_workers: str):
     """流媒体视频下载命令.
 
