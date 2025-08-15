@@ -74,6 +74,13 @@ Copyright 2023-2025 Steve R. Sun. All rights reserved.
     参数:
       mp4_filepath: mp4文件的路径.
       m3u8_directory: m3u8文件夹的路径.
+  w2g-cli download [-w MAX_WORKERS] url m3u8_directory
+    解析并下载指定URL的m3u8流媒体视频文件到本地.
+    参数:
+      url: m3u8流媒体视频的URL.
+      m3u8_directory: m3u8文件夹的保存路径.
+    可选参数:
+      -w, --max_workers: 下载时使用的线程数.
   w2g-cli help
     获取帮助信息.
   w2g-cli launch [--host] [--port] [--origins] [--log_filepath]

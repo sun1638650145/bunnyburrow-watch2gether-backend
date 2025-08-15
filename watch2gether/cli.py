@@ -61,7 +61,7 @@ def parse_args(args: List[str]) -> argparse.Namespace:
     Return:
         (解析后)参数组成的容器.
     """
-    parser = LocalizedArgumentParser(usage='w2g-cli {convert, help, launch, one, version}',  # noqa: E501
+    parser = LocalizedArgumentParser(usage='w2g-cli {convert, download, help, launch, one, version}',  # noqa: E501
                                      add_help=False,
                                      exit_on_error=False)
     subparsers = parser.add_subparsers(dest='command')
