@@ -5,6 +5,7 @@ from typing import List
 
 from watch2gether.command_wrapper import (
     convert_command,
+    download_command,
     help_command,
     launch_command,
     one_command,
@@ -77,6 +78,16 @@ def parse_args(args: List[str]) -> argparse.Namespace:
                                                description='将视频从mp4格式转换成m3u8格式.')  # noqa: E501
         convert_parser.add_argument('mp4_filepath', help='mp4文件的路径.')
         convert_parser.add_argument('m3u8_directory', help='m3u8文件夹的路径.')
+
+        # 流媒体视频下载命令.
+        download_parser = subparsers.add_parser('download',
+                                                usage='w2g-cli download [-w MAX_WORKERS] url m3u8_directory',  # noqa: E501
+                                                description='解析并下载指定URL的m3u8流媒体视频文件到本地.')
+        download_parser.add_argument('-w', '--max_workers',
+                                     default=8,
+                                     help='下载时使用的线程数, 默认为8.')
+        download_parser.add_argument('url', help='m3u8流媒体视频的URL.')
+        download_parser.add_argument('m3u8_directory', help='m3u8文件夹的保存路径.')  # noqa: E501
 
         # 帮助命令.
         subparsers.add_parser('help',
@@ -151,6 +162,8 @@ def run():
 
         if args.command == 'convert':
             convert_command(args.mp4_filepath, args.m3u8_directory)
+        elif args.command == 'download':
+            download_command(args.url, args.m3u8_directory, args.max_workers)
         elif args.command == 'help':
             help_command()
         elif args.command == 'launch':

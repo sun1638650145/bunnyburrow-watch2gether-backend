@@ -10,6 +10,7 @@ from uvicorn import run
 from watch2gether import __version__
 from watch2gether import app
 from watch2gether import convert_mp4_to_m3u8
+from watch2gether import download_m3u8
 from watch2gether import logger
 from watch2gether import streaming
 
@@ -32,6 +33,25 @@ def convert_command(mp4_filepath: str, m3u8_directory: str):
             m3u8文件夹的路径.
     """
     convert_mp4_to_m3u8(mp4_filepath, m3u8_directory)
+
+
+def download_command(url: str, m3u8_directory: str, max_workers: str):
+    """流媒体视频下载命令.
+
+    Example:
+        ```shell
+        w2g-cli download https://www.example.com/video.m3u8 ./video/
+        ```
+
+    Args:
+        url: str,
+            m3u8流媒体视频的URL.
+        m3u8_directory: str,
+            m3u8文件夹的保存路径.
+        max_workers: str,
+            下载时使用的线程数.
+    """
+    download_m3u8(url, m3u8_directory, int(max_workers), info=True)
 
 
 def help_command():
