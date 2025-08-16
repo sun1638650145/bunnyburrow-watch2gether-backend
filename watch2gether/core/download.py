@@ -3,10 +3,10 @@ import sys
 
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
-from typing import Optional, Tuple, Union
+from typing import Dict, Optional, Tuple, Union
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote, urlparse
-from urllib.request import urlopen, urlretrieve
+from urllib.request import Request, urlopen
 
 import m3u8
 
@@ -45,7 +45,8 @@ def download_key_iv(playlist: M3U8, info: bool = False) -> Optional[KeyIVPair]:
 
 def download_for_segment(segment: Segment,
                          segment_filename: Union[str, os.PathLike],
-                         key_iv_pair: Optional[KeyIVPair] = None):
+                         key_iv_pair: Optional[KeyIVPair] = None,
+                         headers: Optional[Dict] = None):
     """下载一个分片文件到本地,
     提供密钥和初始化向量(IV)时会对文件进行AES-128-CBC解密.
 
@@ -56,27 +57,37 @@ def download_for_segment(segment: Segment,
             分片文件的保存路径.
         key_iv_pair: KeyIVPair, default=None,
             密钥和初始化向量(IV).
+        headers: Dict, default=None,
+            HTTP标头.
     """
+    # 构造HTTP标头, 模拟浏览器请求避免`403`错误.
+    if headers is None:
+        headers = {
+            'Referer': segment.absolute_uri,
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) '
+                          'AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 '  # noqa: E501
+                          'Safari/605.1.15'
+        }
+    request = Request(url=segment.absolute_uri, headers=headers)
+
+    # 打开对应的分片数据到内存中.
+    with urlopen(url=request) as response:
+        data = response.read()
+
+    # 对分片文件进行解密.
     if key_iv_pair and (key := key_iv_pair[0]) and (iv := key_iv_pair[1]):
         cipher = Cipher(algorithms.AES(key), modes.CBC(iv))
         decryptor = cipher.decryptor()
 
-        # 打开对应的分片数据到内存中.
-        with urlopen(url=segment.absolute_uri) as response:
-            encrypted_data = response.read()
-
         # 对数据进行解密.
-        decrypted_data = decryptor.update(encrypted_data) + decryptor.finalize()  # noqa: E501
-
-        # 保存分片文件.
-        with open(segment_filename, 'wb') as fp:
-            fp.write(decrypted_data)
+        data = decryptor.update(data) + decryptor.finalize()
 
         # 解密后删除密钥.
         segment.key = None
-    else:
-        # 直接下载对应的分片文件.
-        urlretrieve(url=segment.absolute_uri, filename=segment_filename)
+
+    # 保存分片文件.
+    with open(segment_filename, 'wb') as fp:
+        fp.write(data)
 
     # 重命名为使用相对路径的分片文件.
     segment.uri = Path(segment_filename).name
