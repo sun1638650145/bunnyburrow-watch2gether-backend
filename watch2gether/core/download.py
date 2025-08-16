@@ -152,7 +152,8 @@ def download_m3u8(url: str,
         playlist.dump(filename=os.path.join(m3u8_directory, Path(m3u8_directory).stem + '.m3u8'))  # noqa: E501
 
         if info:
-            print(f'\r100%|██████████| {total_segments}/{total_segments} 下载完成:)')  # noqa: E501
+            end_padding = ' ' * len(f'stream_{total_segments - 1}{suffix}')  # noqa: E501 使用最后一个分片文件长度清除进度显示的残留字符.
+            print(f'\r100%|██████████| {total_segments}/{total_segments} 下载完成:){end_padding}')  # noqa: E501
     except HTTPError:
         logger.error('没有找到流媒体视频文件, 请检查你输入的URL!')
         sys.exit(1)
