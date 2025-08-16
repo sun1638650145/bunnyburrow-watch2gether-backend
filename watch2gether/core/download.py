@@ -95,6 +95,7 @@ def download_for_segment(segment: Segment,
 
 def download_m3u8(url: str,
                   m3u8_directory: Union[str, os.PathLike],
+                  headers: Optional[Dict] = None,
                   max_workers: int = 8,
                   info: bool = False) -> Path:
     """解析并下载指定URL的m3u8流媒体视频文件到本地.
@@ -104,6 +105,8 @@ def download_m3u8(url: str,
             m3u8流媒体视频的URL.
         m3u8_directory: str or os.PathLike,
             m3u8文件夹的保存路径.
+        headers: Dict, default=None,
+            HTTP标头.
         max_workers: int, default=8,
             下载时使用的线程数.
         info: bool, default=False,
@@ -147,7 +150,8 @@ def download_m3u8(url: str,
                     executor.submit(download_for_segment,
                                     segment=segment,
                                     segment_filename=os.path.join(m3u8_directory, f'stream_{idx}{suffix}'),  # noqa: E501
-                                    key_iv_pair=key_iv)
+                                    key_iv_pair=key_iv,
+                                    headers=headers)
                 )
 
             if info:

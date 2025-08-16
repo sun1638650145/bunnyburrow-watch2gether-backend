@@ -58,7 +58,7 @@ def convert_command(mp4_filepath: str, m3u8_directory: str):
 
 @keyboard_interrupt
 def download_command(url: str, m3u8_directory: str, max_workers: str):
-    """流媒体视频下载命令.
+    """流媒体视频下载命令, 若需要复杂功能请使用脚本模式.
 
     Example:
         ```shell
@@ -73,7 +73,11 @@ def download_command(url: str, m3u8_directory: str, max_workers: str):
         max_workers: str,
             下载时使用的线程数.
     """
-    download_m3u8(url, m3u8_directory, int(max_workers), info=True)
+    download_m3u8(url,
+                  m3u8_directory,
+                  headers=None,
+                  max_workers=int(max_workers),
+                  info=True)
 
 
 def help_command():
