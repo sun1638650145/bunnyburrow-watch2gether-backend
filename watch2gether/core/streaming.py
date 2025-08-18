@@ -5,7 +5,7 @@ from pathlib import Path
 from fastapi import APIRouter
 from fastapi import HTTPException
 from fastapi import Request
-from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 
 from watch2gether import logger
 
@@ -27,6 +27,30 @@ async def redirect_streaming_wrapper(video_name: str) -> RedirectResponse:
     """
     return RedirectResponse(url=f'/videos/{video_name}/{video_name}.m3u8',
                             status_code=301)
+
+
+@router.get('/videos/')
+async def get_video_directories(request: Request) -> JSONResponse:
+    """获取流媒体视频目录.
+
+    Args:
+        request: Request,
+            当前的`Request`请求.
+
+    Return:
+        返回包含流媒体视频目录的JSON响应.
+    """
+    video_directories = []
+
+    for item in Path(videos_directory).iterdir():
+        # 确认该项是目录, 并且目录中包含同名m3u8文件.
+        if item.iterdir() and (item / f'{item.name}.m3u8').exists():
+            video_directories.append(item.name)
+
+    logger.info(f'客户端({request.client.host}:{request.client.port})\n'
+                f'获取流媒体视频目录成功, 响应状态码: 200.')
+
+    return JSONResponse(content={'videos': video_directories})
 
 
 @router.get('/videos/{video_directory}/{file_name}')
