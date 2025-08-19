@@ -30,3 +30,19 @@ class TestStreaming(object):
 
         response = client.get(url)
         assert response.status_code == expected_status_code
+
+    def test_get_video_directories(self):
+        """测试获取流媒体视频目录."""
+        client = TestClient(w2g.app)
+
+        # 动态地读取视频目录.
+        video_directories = []
+        for item in Path('./tests/assets').iterdir():
+            if item.is_dir() and (item / f'{item.name}.m3u8').exists():
+                video_directories.append(item.name)
+
+        response = client.get('/videos/?sort=true')
+        json_data = response.json()
+
+        assert response.status_code == 200
+        assert json_data.get('videos') == sorted(video_directories)
