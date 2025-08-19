@@ -141,23 +141,34 @@ streaming.videos_directory = '/path/to/videos_directory/'
 
 重定向视频流媒体.
 
-##### 参数
+##### 路径参数
 
-- **video_name**: 字符串, 视频名称(路径参数), 用于访问播放的流媒体视频.
+- **video_name**: 字符串, 视频名称, 用于访问播放的流媒体视频.
 
 ##### 返回
 
 HTTP重定向到`/videos/{video_name}/{video_name}.m3u8`.
 
+#### *(GET)* /videos/
+
+获取流媒体视频目录.
+
+##### 查询参数
+
+* **sort**: 布尔类型, 默认为`False`, 是否对返回的数据进行排序.
+
+##### 返回
+
+返回包含流媒体视频目录的JSON响应.
+
 #### *(GET)* /videos/{video_directory}/{file_name}
 
 创建流媒体(点播)服务.
 
-##### 参数
+##### 路径参数
 
-- **request**: `Request`实例, 当前的`Request`请求.
-- **video_directory**: 字符串, 流媒体视频`m3u8`索引文件和`ts`文件所处的文件夹(路径参数), 一般和视频同名.
-- **file_name**: 字符串, 请求的文件名(路径参数), 一般只需要请求`视频名.m3u8`即可.
+- **video_directory**: 字符串, 流媒体视频`m3u8`索引文件和`ts`文件所处的文件夹, 一般和视频同名.
+- **file_name**: 字符串, 请求的文件名, 一般只需要请求`视频名.m3u8`即可.
 
 ##### 返回
 
@@ -171,11 +182,9 @@ HTTP重定向到`/videos/{video_name}/{video_name}.m3u8`.
 
 创建`WebSocket`服务.
 
-##### 参数
+##### 路径参数
 
 - `client_id`: 整数, `WebSocket`客户端ID.
-
-- `websocket`: `WebSocket`, `WebSocket`实例.
 
 ## 部署建议 ⚙️
 

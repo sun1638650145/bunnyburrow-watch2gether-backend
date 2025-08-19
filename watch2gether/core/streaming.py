@@ -38,7 +38,7 @@ async def get_video_directories_endpoint(request: Request,
         request: Request,
             当前的`Request`请求.
         sort: Bool, default=False,
-            是否对返回的数据进行排序.
+            是否对返回的数据进行排序(查询参数).
 
     Return:
         返回包含流媒体视频目录的JSON响应.

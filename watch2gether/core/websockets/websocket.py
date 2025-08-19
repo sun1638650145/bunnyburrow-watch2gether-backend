@@ -17,7 +17,7 @@ async def create_websocket_endpoint(client_id: int, websocket: WebSocket):
 
     Args:
         client_id: int,
-            WebSocket客户端ID.
+            WebSocket客户端ID(路径参数).
         websocket: WebSocket,
             WebSocket实例.
     """
