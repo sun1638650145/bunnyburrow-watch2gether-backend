@@ -16,7 +16,7 @@ from watch2gether.core import download_m3u8
 from watch2gether.core import streaming
 from watch2gether.core import websocket
 
-app = FastAPI(version=__version__)
+app = FastAPI(version=__version__, openapi_url=None, docs_url=None, redoc_url=None)  # noqa: E501
 # 导入路由.
 app.include_router(streaming.router)
 app.include_router(websocket.router)
