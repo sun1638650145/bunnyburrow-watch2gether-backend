@@ -47,7 +47,7 @@ async def get_video_directories(request: Request,
 
     for item in Path(videos_directory).iterdir():
         # 确认该项是目录, 并且目录中包含同名m3u8文件.
-        if item.iterdir() and (item / f'{item.name}.m3u8').exists():
+        if item.is_dir() and (item / f'{item.name}.m3u8').exists():
             video_directories.append(item.name)
 
     if sort:
