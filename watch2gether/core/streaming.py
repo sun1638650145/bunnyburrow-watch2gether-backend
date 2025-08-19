@@ -30,12 +30,15 @@ async def redirect_streaming_wrapper(video_name: str) -> RedirectResponse:
 
 
 @router.get('/videos/')
-async def get_video_directories(request: Request) -> JSONResponse:
+async def get_video_directories(request: Request,
+                                sort: bool = False) -> JSONResponse:
     """获取流媒体视频目录.
 
     Args:
         request: Request,
             当前的`Request`请求.
+        sort: Bool, default=False,
+            是否对流媒体视频目录进行排序.
 
     Return:
         返回包含流媒体视频目录的JSON响应.
@@ -46,6 +49,9 @@ async def get_video_directories(request: Request) -> JSONResponse:
         # 确认该项是目录, 并且目录中包含同名m3u8文件.
         if item.iterdir() and (item / f'{item.name}.m3u8').exists():
             video_directories.append(item.name)
+
+    if sort:
+        video_directories.sort()
 
     logger.info(f'客户端({request.client.host}:{request.client.port})\n'
                 f'获取流媒体视频目录成功, 响应状态码: 200.')
