@@ -30,15 +30,15 @@ async def redirect_streaming_wrapper(video_name: str) -> RedirectResponse:
 
 
 @router.get('/videos/')
-async def get_video_directories(request: Request,
-                                sort: bool = False) -> JSONResponse:
+async def get_video_directories_endpoint(request: Request,
+                                         sort: bool = False) -> JSONResponse:
     """获取流媒体视频目录.
 
     Args:
         request: Request,
             当前的`Request`请求.
         sort: Bool, default=False,
-            是否对流媒体视频目录进行排序.
+            是否对返回的数据进行排序.
 
     Return:
         返回包含流媒体视频目录的JSON响应.
