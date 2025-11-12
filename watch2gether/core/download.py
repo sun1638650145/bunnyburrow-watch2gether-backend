@@ -60,6 +60,12 @@ def download_for_segment(segment: Segment,
         headers: Dict, default=None,
             HTTP标头.
     """
+    segment_filename = Path(segment_filename)
+
+    # 检查分片文件是否存在且非空, 避免重复下载.
+    if segment_filename.exists() and segment_filename.stat().st_size > 0:
+        return
+
     # 构造HTTP标头, 模拟浏览器请求避免`403`错误.
     if headers is None:
         headers = {
@@ -90,7 +96,7 @@ def download_for_segment(segment: Segment,
         fp.write(data)
 
     # 重命名为使用相对路径的分片文件.
-    segment.uri = Path(segment_filename).name
+    segment.uri = segment_filename.name
 
 
 def download_m3u8(url: str,
