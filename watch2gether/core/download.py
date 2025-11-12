@@ -65,7 +65,7 @@ def download_for_segment(segment: Segment,
         headers = {
             'Referer': segment.absolute_uri,
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) '
-                          'AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.6 '  # noqa: E501
+                          'AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.1 '  # noqa: E501
                           'Safari/605.1.15'
         }
     request = Request(url=segment.absolute_uri, headers=headers)
