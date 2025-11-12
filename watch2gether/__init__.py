@@ -3,7 +3,7 @@
 Bunnyburrow Software Project(兔窝镇软件计划)
 Copyright 2023-2025 Steve R. Sun. All rights reserved.
 """
-__version__ = '0.1b3'
+__version__ = '0.1b4'
 
 from fastapi import FastAPI
 
