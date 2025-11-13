@@ -44,7 +44,7 @@ def download_key_iv(playlist: M3U8, info: bool = False) -> Optional[KeyIVPair]:
 
 
 def download_for_segment(segment: Segment,
-                         segment_filename: Union[str, os.PathLike],
+                         segment_filename: Path,
                          key_iv_pair: Optional[KeyIVPair] = None,
                          headers: Optional[Dict] = None):
     """下载一个分片文件到本地,
@@ -53,15 +53,13 @@ def download_for_segment(segment: Segment,
     Args:
         segment: Segment,
             要下载的单个分片文件.
-        segment_filename: str or os.PathLike,
+        segment_filename: Path,
             分片文件的保存路径.
         key_iv_pair: KeyIVPair, default=None,
             密钥和初始化向量(IV).
         headers: Dict, default=None,
             HTTP标头.
     """
-    segment_filename = Path(segment_filename)
-
     # 检查分片文件是否存在且非空, 避免重复下载.
     if segment_filename.exists() and segment_filename.stat().st_size > 0:
         return
@@ -155,7 +153,7 @@ def download_m3u8(url: str,
                 futures.append(
                     executor.submit(download_for_segment,
                                     segment=segment,
-                                    segment_filename=os.path.join(m3u8_directory, f'stream_{idx}{suffix}'),  # noqa: E501
+                                    segment_filename=Path(m3u8_directory) / f'stream_{idx}{suffix}',  # noqa: E501
                                     key_iv_pair=key_iv,
                                     headers=headers)
                 )
