@@ -62,36 +62,36 @@ def download_for_segment(segment: Segment,
     """
     # 检查分片文件是否存在且非空, 避免重复下载.
     if segment_filename.exists() and segment_filename.stat().st_size > 0:
-        return
+        pass
+    else:
+        # 构造HTTP标头, 模拟浏览器请求避免`403`错误.
+        if headers is None:
+            headers = {
+                'Referer': segment.absolute_uri,
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) '  # noqa: E501
+                              'AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.1 '  # noqa: E501
+                              'Safari/605.1.15'
+            }
+        request = Request(url=segment.absolute_uri, headers=headers)
 
-    # 构造HTTP标头, 模拟浏览器请求避免`403`错误.
-    if headers is None:
-        headers = {
-            'Referer': segment.absolute_uri,
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) '
-                          'AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.1 '  # noqa: E501
-                          'Safari/605.1.15'
-        }
-    request = Request(url=segment.absolute_uri, headers=headers)
+        # 打开对应的分片数据到内存中.
+        with urlopen(url=request) as response:
+            data = response.read()
 
-    # 打开对应的分片数据到内存中.
-    with urlopen(url=request) as response:
-        data = response.read()
+        # 对分片文件进行解密.
+        if key_iv_pair and (key := key_iv_pair[0]) and (iv := key_iv_pair[1]):
+            cipher = Cipher(algorithms.AES(key), modes.CBC(iv))
+            decryptor = cipher.decryptor()
 
-    # 对分片文件进行解密.
-    if key_iv_pair and (key := key_iv_pair[0]) and (iv := key_iv_pair[1]):
-        cipher = Cipher(algorithms.AES(key), modes.CBC(iv))
-        decryptor = cipher.decryptor()
+            # 对数据进行解密.
+            data = decryptor.update(data) + decryptor.finalize()
 
-        # 对数据进行解密.
-        data = decryptor.update(data) + decryptor.finalize()
+            # 解密后删除密钥.
+            segment.key = None
 
-        # 解密后删除密钥.
-        segment.key = None
-
-    # 保存分片文件.
-    with open(segment_filename, 'wb') as fp:
-        fp.write(data)
+        # 保存分片文件.
+        with open(segment_filename, 'wb') as fp:
+            fp.write(data)
 
     # 重命名为使用相对路径的分片文件.
     segment.uri = segment_filename.name
