@@ -91,7 +91,7 @@ def help_command():
     help_msg = f"""一起看电影命令行工具 {__version__}
 
 Bunnyburrow Software Project(兔窝镇软件计划)
-Copyright 2023-2025 Steve R. Sun. All rights reserved.
+Copyright 2023-2026 Steve R. Sun. All rights reserved.
 --------------------------------------------------
 使用方法:
   w2g-cli convert mp4_filepath m3u8_directory
