@@ -13,11 +13,11 @@ jobs:
     runs-on: ubuntu-latest # ubuntu-24.04
 
     steps:
-    - uses: actions/checkout@v5.0.0
+    - uses: actions/checkout@v6.0.2
       with:
         lfs: false # 不下载Git LFS缓存.
     - name: Set up Python
-      uses: actions/setup-python@v6.0.0
+      uses: actions/setup-python@v6.2.0
       with:
         python-version: '3.12'
     - name: Install dependencies
@@ -27,7 +27,7 @@ jobs:
     - name: Build package
       run: python -m build
     - name: Publish package to Releases
-      uses: softprops/action-gh-release@v2.4.2
+      uses: softprops/action-gh-release@v2.5.0
       with:
         files: |
           dist/*.whl
