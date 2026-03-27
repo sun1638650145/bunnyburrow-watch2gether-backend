@@ -11,25 +11,31 @@ router = APIRouter()
 manager = ConnectionManager()  # 实例化WebSocket连接管理器.
 
 
-@router.websocket('/ws/{client_id}/')
-async def create_websocket_endpoint(client_id: int, websocket: WebSocket):
+@router.websocket('/ws/{room_id}/{client_id}/')
+async def create_websocket_endpoint(room_id: str,
+                                    client_id: int,
+                                    websocket: WebSocket):
     """创建WebSocket服务.
 
     Args:
+        room_id: str,
+            WebSocket房间ID(路径参数).
         client_id: int,
             WebSocket客户端ID(路径参数).
         websocket: WebSocket,
             WebSocket实例.
     """
-    # 首先进行客户端ID校验.
-    if client_id in manager.active_connections:
-        await websocket.close(code=1008,  # Policy Violation.
-                              reason='具有相同ID的客户端已存在, 连接被拒绝!')
+    # 首先进行客户端ID校验(同一房间内不允许存在相同的客户端ID).
+    if manager.has_client(room_id, client_id):
+        await websocket.close(
+            code=1008,  # Policy Violation.
+            reason=f'当前房间({room_id})内具有相同ID的客户端已存在, 连接被拒绝!'  # noqa: E501
+        )
 
         logger.warning(f'客户端({websocket.client.host}:{websocket.client.port})'
-                       f'试图以已存在客户端ID#{client_id}连接被拒!')
+                       f'试图以已存在客户端ID#{client_id}连接房间({room_id})被拒!')
     else:
-        await manager.connect(client_id, websocket)
+        await manager.connect(room_id, client_id, websocket)
 
         try:
             while True:
@@ -41,11 +47,11 @@ async def create_websocket_endpoint(client_id: int, websocket: WebSocket):
                     # 对工作类型进行判断.
                     if (props.get('type') == 'websocket.unicast'
                             and received_client_id > 0):
-                        await manager.unicast(data, client_id, received_client_id)  # noqa: E501
+                        await manager.unicast(data, room_id, client_id, received_client_id)  # noqa: E501
                     else:
-                        await manager.broadcast(data, client_id)
+                        await manager.broadcast(data, room_id, client_id)
                 except JSONDecodeError:
                     logger.warning(f'客户端({websocket.client.host}:{websocket.client.port})'  # noqa: E501
                                    f'发送无法解析的JSON数据!')
         except WebSocketDisconnect:
-            manager.disconnect(client_id)
+            manager.disconnect(room_id, client_id)
