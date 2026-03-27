@@ -31,7 +31,7 @@ class ConnectionManager(object):
             room_id: str,
                 发起广播数据的房间ID.
             client_id: int, default=None,
-                (可选)广播数据的客户端, 填写此参数则不对自身广播.
+                (可选)广播数据的客户端ID, 填写此参数则不对自身广播.
         """
         room = self.room_connections.get(room_id)
 
@@ -117,7 +117,7 @@ class ConnectionManager(object):
             data: Dict,
                 单播的数据(使用JSON格式).
             room_id: str,
-                发起单薄数据的房间ID.
+                发起单播数据的房间ID.
             client_id: int,
                 发起单播的客户端ID.
             received_client_id: int,
@@ -129,7 +129,7 @@ class ConnectionManager(object):
             received_websocket = room.get(received_client_id)
             await received_websocket.send_json(data)
 
-            logger.info(f'客户端({websocket.client.host}:{websocket.client.port})在房间({room_id})中()'
+            logger.info(f'客户端({websocket.client.host}:{websocket.client.port})在房间({room_id})中'
                         f'向客户端({received_websocket.client.host}:{received_websocket.client.port})单播数据.')
         except AttributeError:
             logger.error(f'房间({room_id})中接收单播的客户端不存在!')

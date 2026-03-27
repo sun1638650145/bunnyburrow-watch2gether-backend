@@ -52,6 +52,6 @@ async def create_websocket_endpoint(room_id: str,
                         await manager.broadcast(data, room_id, client_id)
                 except JSONDecodeError:
                     logger.warning(f'客户端({websocket.client.host}:{websocket.client.port})'  # noqa: E501
-                                   f'发送无法解析的JSON数据!')
+                                   f'在房间({room_id})中发送无法解析的JSON数据!')
         except WebSocketDisconnect:
             manager.disconnect(room_id, client_id)
