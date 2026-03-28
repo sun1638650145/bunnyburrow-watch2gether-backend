@@ -90,7 +90,13 @@ class ConnectionManager(object):
         websocket = room.pop(client_id)
 
         logger.info(f'房间({room_id})中的客户端({websocket.client.host}:{websocket.client.port})断开连接.')
-        logger.info(f'房间({room_id})当前活跃的连接数为{len(room)}.')
+
+        # 如果房间中没有活跃的连接, 则直接关闭房间.
+        if not room:
+            self.room_connections.pop(room_id)
+            logger.info(f'房间({room_id})中没有活跃的连接, 房间已关闭.')
+        else:
+            logger.info(f'房间({room_id})当前活跃的连接数为{len(room)}.')
 
     def has_client(self, room_id: str, client_id: int) -> bool:
         """检查指定房间中是否已存在相同ID的客户端.
