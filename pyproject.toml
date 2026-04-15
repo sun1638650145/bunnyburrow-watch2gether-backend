@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "watch2gether"
 version = "0.1b4"
 dependencies = [
-    "cryptography==46.0.5",
+    "cryptography==46.0.7",
     "fastapi>=0.121.1, <=0.133.0",
     "m3u8==6.0.0",
     "uvicorn>=0.38.0, <=0.41.0",
