@@ -138,7 +138,7 @@ class ConnectionManager(object):
 
             logger.info(f'客户端({_get_client_address(websocket)})在房间({room_id})中'
                         f'向客户端({_get_client_address(received_websocket)})单播数据.')
-        except AttributeError:
+        except KeyError:
             logger.error(f'房间({room_id})中接收单播的客户端不存在!')
 
 
