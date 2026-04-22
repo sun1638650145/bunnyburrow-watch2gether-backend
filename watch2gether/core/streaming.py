@@ -8,6 +8,7 @@ from fastapi import Request
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 
 from watch2gether import logger
+from watch2gether.core.networking import get_client_address
 
 
 router = APIRouter()
@@ -53,7 +54,7 @@ async def get_video_directories_endpoint(request: Request,
     if sort:
         video_directories.sort()
 
-    logger.info(f'客户端({request.client.host}:{request.client.port})\n'
+    logger.info(f'客户端({get_client_address(request)})\n'
                 f'获取流媒体视频目录成功, 响应状态码: 200.')
 
     return JSONResponse(content={'videos': video_directories})
@@ -84,12 +85,12 @@ async def create_vod_streaming_endpoint(request: Request,
     file_path = os.path.join(videos_directory, video_directory, file_name)
 
     if os.path.exists(file_path):
-        logger.info(f'客户端({request.client.host}:{request.client.port})\n'
+        logger.info(f'客户端({get_client_address(request)})\n'
                     f'请求文件:{file_path} 响应状态码: 200.')
 
         return FileResponse(file_path)
     else:
-        logger.warning(f'客户端({request.client.host}:{request.client.port})\n'
+        logger.warning(f'客户端({get_client_address(request)})\n'
                        f'请求不存在文件:{file_path} 响应状态码: 404.')
 
         raise HTTPException(status_code=404)
