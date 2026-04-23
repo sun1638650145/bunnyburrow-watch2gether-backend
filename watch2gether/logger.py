@@ -42,6 +42,7 @@ class Logger(logging.Logger):
             filepath: str or os.PathLike,
                 日志文件的路径.
         """
-        self.file_handler = FileHandler(filename=filepath, encoding='UTF-8')
-        self.file_handler.setFormatter(self.formatter)
-        self.addHandler(self.file_handler)
+        file_handler = FileHandler(filename=filepath, encoding='UTF-8')
+        file_handler.setFormatter(self.formatter)
+        self.addHandler(file_handler)
+        self.file_handler = file_handler
