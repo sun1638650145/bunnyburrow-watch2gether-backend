@@ -31,7 +31,11 @@ def download_key_iv(playlist: M3U8, info: bool = False) -> Optional[KeyIVPair]:
     Returns:
         密钥和初始化向量(IV), 当m3u8播放列表没有密钥信息时则返回None.
     """
-    if key_object := playlist.keys[0]:
+    key_object = playlist.keys[0]
+
+    if key_object is None or key_object.uri is None or key_object.iv is None:
+        return None
+    else:
         key = urlopen(key_object.uri).read()
         iv = bytes.fromhex(key_object.iv[2:])  # 去掉十六进制字符串前导`0x`.
 
@@ -39,8 +43,6 @@ def download_key_iv(playlist: M3U8, info: bool = False) -> Optional[KeyIVPair]:
             print('密钥和初始化向量(IV)下载成功:)')
 
         return key, iv
-    else:
-        return None
 
 
 def download_for_segment(segment: Segment,
@@ -65,14 +67,13 @@ def download_for_segment(segment: Segment,
         pass
     else:
         # 构造HTTP标头, 模拟浏览器请求避免`403`错误.
-        if headers is None:
-            headers = {
-                'Referer': segment.absolute_uri,
-                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) '  # noqa: E501
-                              'AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.1 '  # noqa: E501
-                              'Safari/605.1.15'
-            }
-        request = Request(url=segment.absolute_uri, headers=headers)
+        request_headers = headers or {
+            'Referer': segment.absolute_uri,
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) '
+                          'AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.1 '  # noqa: E501
+                          'Safari/605.1.15'
+        }
+        request = Request(url=segment.absolute_uri, headers=request_headers)
 
         # 打开对应的分片数据到内存中.
         with urlopen(url=request) as response:
@@ -148,7 +149,7 @@ def download_m3u8(url: str,
 
             for idx, segment in enumerate(playlist.segments):
                 # 获取分片文件的扩展名.
-                suffix = Path(urlparse(url=segment.uri).path).suffix
+                suffix = Path(urlparse(url=segment.uri or '').path).suffix
 
                 futures.append(
                     executor.submit(download_for_segment,
