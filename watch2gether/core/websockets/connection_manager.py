@@ -32,13 +32,13 @@ class ConnectionManager(object):
             room_id: str,
                 发起广播数据的房间ID.
             client_id: int, default=None,
-                (可选)广播数据的客户端ID, 填写此参数则不对自身广播.
+                (可选)广播数据的客户端ID, 不填写此参数则表示由系统发起广播.
         """
         room = self.room_connections[room_id]
 
         await_tasks = []
         for received_client_id, websocket in room.items():
-            if client_id != received_client_id:  # 避免广播风暴.
+            if received_client_id != client_id:  # 客户端广播时不回传给发起方.
                 await_tasks.append(
                     asyncio.create_task(websocket.send_json(data))
                 )
@@ -51,7 +51,7 @@ class ConnectionManager(object):
 
             logger.info(f'房间({room_id})中的客户端({get_client_address(websocket)})广播数据.')
         else:
-            logger.warning(f'房间({room_id})中广播数据(包含自身客户端)!')
+            logger.info(f'系统向房间({room_id})中广播数据.')
 
     async def connect(self,
                       room_id: str,
