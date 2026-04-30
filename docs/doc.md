@@ -178,12 +178,13 @@ HTTP重定向到`/videos/{video_name}/{video_name}.m3u8`.
 
 **HTTPException 404**: 如果文件不存在, 则向客户端返回`404`错误.
 
-#### *(WEBSOCKET)* /ws/{client_id}/
+#### *(WEBSOCKET)* /ws/{room_id}/{client_id}/
 
 创建`WebSocket`服务.
 
 ##### 路径参数
 
+- `room_id`: 字符串, `WebSocket`房间ID.
 - `client_id`: 整数, `WebSocket`客户端ID.
 
 ## 部署建议 ⚙️
