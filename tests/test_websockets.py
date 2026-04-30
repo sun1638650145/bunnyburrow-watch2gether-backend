@@ -41,9 +41,12 @@ class TestWebSockets(object):
             assert set(room) == {client_id}
 
             # 在同一房间中使用相同客户端ID连接.
-            with pytest.raises(WebSocketDisconnect):
+            with pytest.raises(WebSocketDisconnect) as exc_info:
                 with client.websocket_connect(f'/ws/{room_id}/{client_id}/'):
-                    assert set(room) == {client_id}  # noqa: E501 连接被拒且仍为1个活跃连接.
+                    pass
+
+            assert exc_info.value.code == 1008
+            assert set(room) == {client_id}  # noqa: E501 连接被拒且仍为1个活跃连接.
 
     def test_client_broadcast(self, client, manager):
         """测试由客户端发起广播."""
@@ -86,9 +89,9 @@ class TestWebSockets(object):
             client.websocket_connect(f'/ws/{room_id}/{receiver_a_client_id}/') as receiver_a_websocket,  # noqa: E501
             client.websocket_connect(f'/ws/{room_id}/{receiver_b_client_id}/') as receiver_b_websocket  # noqa: E501
         ):
-            await manager.broadcast(data, room_id)
-
             room = manager.room_connections[room_id]
+
+            await manager.broadcast(data, room_id)
 
             assert len(room) == 2
             assert receiver_a_websocket.receive_json() == data
