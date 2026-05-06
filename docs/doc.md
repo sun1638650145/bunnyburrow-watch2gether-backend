@@ -17,7 +17,7 @@
 
 ```shell
 # 安装插件.
-pip install watch2gether-0.1b3-py3-none-any.whl
+pip install watch2gether-0.1b4-py3-none-any.whl
 # 强烈推荐安装到虚拟环境, 并创建符号链接.
 ln -s /path/to/bin/w2g-cli /usr/local/bin/w2g-cli
 ```
